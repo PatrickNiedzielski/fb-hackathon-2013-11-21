@@ -2,32 +2,64 @@
 <head>
 <title>Learn Python!</title>
 <style type="text/css">
-#code-left {
-	width: 50%;
-	float:left;
-}
-#code-right {
-	width:50%;
-	float:right;
-}
-#p1code,#p2code {
-	height:200px;
-}
-#p1code,#p2code,#p1s,#p2s {
-	width: 100%;
-}
+@import url(assets/css/styles.css);
 </style>
+<script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 </head>
 <body>
-<div id="code-left">
-<textarea id="p1code" /></textarea><br />
-<button id="p1s" class="not-ready">Player 1: Ready?</button>
+<div id="main">
+	<div id="code-left">
+	<textarea id="p1code" /></textarea><br />
+	<button id="p1s" class="not-ready">Player 1: Ready?</button>
+	</div>
+	<div id="code-right">
+	<textarea id="p2code" /></textarea><br />
+	<button id="p2s" class="not-ready">Player 2: Ready?</button>
+	</div>
+	<div id="map">
+	<img src="assets/img/house7.gif" />
+	</div>
 </div>
-<div id="code-right">
-<textarea id="p2code" /></textarea><br />
-<button id="p2s" class="not-ready">Player 2: Ready?</button>
+<div id="sidebar">
+<h2>Chat</h2>
+<div id="messagesDiv">
+<input type="text" id="messageInput" placeholder="Message" />
 </div>
-<script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script>
+var gameRoot = "https://learn-python.firebaseIO.com";
+var rootRef = new Firebase(root + "/");
+var code1DataRef = new Firebase(root + "/code1");
 
+$('#p1code').keypress(function(e) {
+	var code1 = $('#p1code').val();
+	rootRef.set({p1code: code1});
+});
+
+$('#p2code').keypress(function(e) {
+	var code1 = $('#p1code').val();
+	rootRef.set({p1code: code1});
+});
+
+$('#messageInput').keypress(function(e) {
+	if(e.keyCode==13) {
+		var msgText = $('#messageInput').val();
+		myDataRef.push({player: 1, text: msgText});
+		$('#messageInput').val('');
+	}
+});
+myDataRef.on('child_added', function(snapshot) {
+	var message = snapshot.val();
+	displayChatMessage(message.player, message.text)
+});
+
+code1DataRef.on('value', function(snapshot) {
+	$('#p1code').val(snapshot.val());
+});
+
+function displayChatMessage(name, text) {
+	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+        $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+}
+</script>
 </body>
 </html>
