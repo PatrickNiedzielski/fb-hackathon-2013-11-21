@@ -1,35 +1,33 @@
-<!DOCTYPE html>
-<!--
-Python Thing
-Copyright (C) 2013 Cornell FB Hackathon Team.
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
-<html lang="en">
+<html>
 <head>
-<title>Python thing</title>
-<meta charset="utf-8">
+<title>Learn Python!</title>
+<style type="text/css">
+#code-left {
+	width: 50%;
+	float:left;
+}
+#code-right {
+	width:50%;
+	float:right;
+}
+#p1code,#p2code {
+	height:200px;
+}
+#p1code,#p2code,#p1s,#p2s {
+	width: 100%;
+}
+</style>
 </head>
 <body>
-<div id="chat">
+<div id="code-left">
+<textarea id="p1code" /></textarea><br />
+<button id="p1s" class="not-ready">Player 1: Ready?</button>
 </div>
-<div id="code_one">
+<div id="code-right">
+<textarea id="p2code" /></textarea><br />
+<button id="p2s" class="not-ready">Player 2: Ready?</button>
 </div>
-<div id="code_two">
-</div>
-<div id="map">
-</div>
+<script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
+
 </body>
 </html>
