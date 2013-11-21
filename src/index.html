@@ -5,6 +5,7 @@
 @import url(assets/css/styles.css);
 </style>
 <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
 </head>
 <body>
 <div id="main">
@@ -26,9 +27,11 @@
 <input type="text" id="messageInput" placeholder="Message" />
 </div>
 <script>
-var gameRoot = "https://learn-python.firebaseIO.com";
-var rootRef = new Firebase(root + "/");
-var code1DataRef = new Firebase(root + "/code1");
+var root = "https://learn-python.firebaseIO.com";
+var gameRoot = root;
+var rootRef = new Firebase(gameRoot + "/");
+var code1DataRef = new Firebase(gameRoot + "/code1");
+var messagesRef = new Firebase(gameRoot + "/messages");
 
 $('#p1code').keypress(function(e) {
 	var code1 = $('#p1code').val();
@@ -43,11 +46,11 @@ $('#p2code').keypress(function(e) {
 $('#messageInput').keypress(function(e) {
 	if(e.keyCode==13) {
 		var msgText = $('#messageInput').val();
-		myDataRef.push({player: 1, text: msgText});
+		messagesRef.push({player: 1, text: msgText});
 		$('#messageInput').val('');
 	}
 });
-myDataRef.on('child_added', function(snapshot) {
+messagesRef.on('child_added', function(snapshot) {
 	var message = snapshot.val();
 	displayChatMessage(message.player, message.text)
 });
