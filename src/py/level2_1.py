@@ -20,4 +20,4 @@ player2._position = [14, 6];
 _world.grid[player2._position[1]][player2._position[0]] = player2
 
 def at_end():
-    # nothing
+    pass
