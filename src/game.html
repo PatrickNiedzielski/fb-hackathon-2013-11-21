@@ -80,10 +80,13 @@ editAreaLoader.init({
 	<button id="p2s" class="not-ready">Player 2: Ready?</button>
 	</div>
 	<div id="map">
-	<img src="assets/img/house7.gif" />
+	<canvas id="canvas" style="border: 1px solid black;"></canvas>
 	</div>
 </div>
 <div id="sidebar">
+<h2>Level</h2>
+<h3>Objective</h3>
+Get player 1 to the center before player 2 does!
 <h2>Chat</h2>
 <div id="messagesDiv">
 <input type="text" id="messageInput" placeholder="Message" />
@@ -102,9 +105,11 @@ rootRef.on('value', function(ss) {
 		gameStarted = true;
 		if(userObj.id != ss.val().p1) {
 			$("#p1code").prop("disabled",true);
+			$("#p1s").prop("disabled",true);
 		}
 		if(userObj.id != ss.val().p2) {
 			$("#p2code").prop("disabled",true);
+			$("#p1s").prop("disabled",true);
 		}
 		$('#background, #front').fadeOut(200);
 	}
@@ -151,6 +156,90 @@ function displayChatMessage(name, text) {
 	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
         $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 }
+</script>
+<script>
+var width = 900;
+var height = 600;
+var cols = 45;
+var rows = 30;
+var random = true;
+var ctx;
+var noob_mode = true;
+var board = [];
+var prefix = "assets/img/";
+var dict = {"W": "water.png", "L": "land.png"};
+var images = {};
+var base;
+
+function tileWidth() {
+	return width/cols;
+}
+function tileHeight() {
+	return height/rows;
+}
+for(var key in dict) {
+	base = new Image();
+	base.src = prefix + dict[key];
+	images[key] = base;
+}
+
+
+for(var i=0;i<rows;i++) //Initialize board
+{
+	board[i]=[];
+	for(var j=0;j<cols;j++)
+		board[i][j] = 0;
+}
+
+function drawTile(row,col,key)
+{
+	var startingX = col*tileWidth();
+	var startingY = row*tileHeight();
+	ctx.drawImage(images[key],startingX,startingY,tileWidth(),tileHeight());
+}
+
+function drawBoard() {
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+
+	if(noob_mode) {
+		for(var i=1;i<cols;i++){ //Draw columns
+			ctx.moveTo(width/cols*i, 0);
+			ctx.lineTo(width/cols*i, height);
+			ctx.stroke();
+		}
+		for(var i=1;i<rows;i++){ //Draw rows
+			ctx.moveTo(0,height/rows*i);
+			ctx.lineTo(width, height/rows*i);
+			ctx.stroke();
+		}
+	}
+	if(random) {
+		for(var i=0;i<rows;i++) {
+			for(var j=0;j<cols;j++) {
+				drawTile(i,j,Math.random() < 0.5 ? "W" : "L");
+			}
+		}
+	}
+}
+
+$(document).ready(function(){
+	var canvas = document.getElementById('canvas');
+	canvas.height = height;
+	canvas.width = width;
+	if (canvas.getContext) {
+		ctx = canvas.getContext("2d");
+		drawBoard();
+		window.setTimeout(drawBoard,1000);
+	}
+	$(canvas).mousedown(function myDown(e) 
+	{
+		var position = $(canvas).position();
+		var x = e.pageX-position.left;
+		var y = e.pageY-position.top;
+		var col = Math.floor(x / tileWidth());
+		var row = Math.floor(y / tileHeight());
+	});	
+});
 </script>
 </body>
 </html>
