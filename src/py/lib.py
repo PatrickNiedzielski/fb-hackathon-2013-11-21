@@ -223,15 +223,13 @@ class Player:
     def move_up(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
-            self._move_dir(_north, num)
+        self._move_dir(_north, num)
         gevent.sleep(0)
 
     def move_down(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
-            self._move_dir(_south, num)
+        self._move_dir(_south, num)
         gevent.sleep(0)
 
     def _run_script(self, script):
