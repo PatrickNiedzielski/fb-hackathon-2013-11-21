@@ -17,7 +17,7 @@
 player1._position = [5, 6];
 player2._position = [14, 6];
 
-def at_end:
+def at_end():
     if (len(player1._messages) == 0 or \
         len(player2._messages) == 0):
         raise Exception("Failure")

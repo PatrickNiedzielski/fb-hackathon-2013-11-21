@@ -20,7 +20,7 @@ player2._position = [14, 6];
 sign1 = Sign([2, 4], "Face")
 sign2 = Sign([13, 7], "Book")
 
-def at_end:
+def at_end():
     if (player1._messages.count("Face") == 0 and \
         player1._messages.count("Book") == 0 or \
         player2._messages.count("Face") == 0 and \
