@@ -103,28 +103,28 @@ class Player:
         print _sub_none(repr(_world.grid))
 
     def move_left(self, num = 1):
-        if num > 4:
+        if num > 3:
             throw "Can't jump that far"
         for i in range(num):
             self._move_dir(_west)
         gevent.sleep(0)
 
     def move_right(self, num = 1):
-        if num > 4:
+        if num > 3:
             throw "Can't jump that far"
         for i in range(num):
             self._move_dir(_east)
         gevent.sleep(0)
 
     def move_up(self, num = 1):
-        if num > 4:
+        if num > 3:
             throw "Can't jump that far"
         for i in range(num):
             self._move_dir(_north)
         gevent.sleep(0)
 
     def move_down(self, num = 1):
-        if num > 4:
+        if num > 3:
             throw "Can't jump that far"
         for i in range(num):
             self._move_dir(_south)
