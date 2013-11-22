@@ -22,7 +22,7 @@ function getParameterByName(name) {
 }
 var id = getParameterByName('id');
 if(id==null) {
-	document.location = "index.html";
+    document.location = "index.html";
 }
 var root = "https://learn-python.firebaseIO.com";
 var rootRef = new Firebase(root + "/");
@@ -31,7 +31,7 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
     // an error occurred while attempting login
     console.log(error);
   } else if (user) {
-  	userObj = user;
+      userObj = user;
     // user authenticated with Firebase
     console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
   } else {
@@ -44,24 +44,24 @@ var useEditArea = false;
 
 if(useEditArea) {
 editAreaLoader.init({
-			id: "p1code"	// id of the textarea to transform		
-			,start_highlight: true	// if start with highlight
-			,allow_resize: "no"
-			,allow_toggle: false
-			,word_wrap: true
-			,language: "en"
-			,syntax: "python"	
-		});
+            id: "p1code"    // id of the textarea to transform        
+            ,start_highlight: true    // if start with highlight
+            ,allow_resize: "no"
+            ,allow_toggle: false
+            ,word_wrap: true
+            ,language: "en"
+            ,syntax: "python"    
+        });
 
 editAreaLoader.init({
-			id: "p2code"	// id of the textarea to transform		
-			,start_highlight: true	// if start with highlight
-			,allow_resize: "no"
-			,allow_toggle: false
-			,word_wrap: true
-			,language: "en"
-			,syntax: "python"	
-		});
+            id: "p2code"    // id of the textarea to transform        
+            ,start_highlight: true    // if start with highlight
+            ,allow_resize: "no"
+            ,allow_toggle: false
+            ,word_wrap: true
+            ,language: "en"
+            ,syntax: "python"    
+        });
 }
 
 </script>
@@ -71,17 +71,17 @@ editAreaLoader.init({
 <div id="front">Waiting...</div>
 <h1>Learn Python!</h1>
 <div id="main">
-	<div id="code-left">
-	<textarea id="p1code" class="code" /></textarea><br />
-	<button id="p1s" class="greybtn">Player 1: Ready?</button>
-	</div>
-	<div id="code-right">
-	<textarea id="p2code" class="code" /></textarea><br />
-	<button id="p2s" class="greybtn">Player 2: Ready?</button>
-	</div>
-	<div id="map">
-	<canvas id="canvas" style="border: 1px solid black;"></canvas>
-	</div>
+    <div id="code-left">
+    <textarea id="p1code" class="code" /></textarea><br />
+    <button id="p1s" class="greybtn">Player 1: Ready?</button>
+    </div>
+    <div id="code-right">
+    <textarea id="p2code" class="code" /></textarea><br />
+    <button id="p2s" class="greybtn">Player 2: Ready?</button>
+    </div>
+    <div id="map">
+    <canvas id="canvas" style="border: 1px solid black;"></canvas>
+    </div>
 </div>
 <div id="sidebar">
 <h2>Level</h2>
@@ -100,101 +100,109 @@ var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
 var gameStarted = false;
 var playerOne = false;
-var level = 1;
 rootRef.on('value', function(ss) {
-	console.log(ss.val());
-	if(!gameStarted && ss.val().p1 !== undefined && ss.val().p2 !== undefined) {
-		gameStarted = true;
-		if(userObj.id != ss.val().p1) {
-			playerOne = false;
-			$("#p1code").prop("disabled",true);
-			$("#p1s").prop("disabled",true);
-		}
-		if(userObj.id != ss.val().p2) {
-			playerOne = 
-			$("#p2code").prop("disabled",true);
-			$("#p2s").prop("disabled",true);
-		}
-		$('#background, #front').fadeOut(200);
-	}
-	if(ss.val().p1ready == true) {
-		toggleReady("#p1s");
-	}
-	if(ss.val().p2ready == true) {
-		toggleReady("#p2s");
-	}
-	if(ss.val().p1ready == true && ss.val().p2ready == true) {
-		console.log("Both players are ready, execute the code");
-		runSimulation([$("#p1code").val(), $("#p2code").val()],level);
-	}
+    console.log(ss.val());
+    if(!gameStarted && ss.val().p1 !== undefined && ss.val().p2 !== undefined) {
+        gameStarted = true;
+        if(userObj.id != ss.val().p1) {
+            playerOne = false;
+            $("#p1code").prop("disabled",true);
+            $("#p1s").prop("disabled",true);
+        }
+        if(userObj.id != ss.val().p2) {
+            playerOne = 
+            $("#p2code").prop("disabled",true);
+            $("#p2s").prop("disabled",true);
+        }
+        $('#background, #front').fadeOut(200);
+    }
+    if(ss.val().p1ready == true) {
+        toggleReady("#p1s");
+    }
+    if(ss.val().p2ready == true) {
+        toggleReady("#p2s");
+    }
+    if(ss.val().p1ready == true && ss.val().p2ready == true) {
+        console.log("Both players are ready, execute the code");
+        runSimulation([$("#p1code").val(), $("#p2code").val()],9);
+    }
 });
 
 $("#p1s").on('click', function() {
-	toggleReady("#p1s");
-	rootRef.child('p1ready').set(true);
+    toggleReady("#p1s");
+    rootRef.child('p1ready').set(true);
 });
 $("#p2s").on('click', function() {
-	toggleReady("#p2s");
-	rootRef.child('p2ready').set(true);
+    toggleReady("#p2s");
+    rootRef.child('p2ready').set(true);
 });
 
 code1DataRef.on('value', function(snapshot) {
-	var code1 = snapshot.val();
-	if(useEditArea) {
-	editAreaLoader.setValue("p1code", code1);
-	}
-	else {
-		$("#p1code").val(code1);
-	}
+    var code1 = snapshot.val();
+    if(useEditArea) {
+    editAreaLoader.setValue("p1code", code1);
+    }
+    else {
+        $("#p1code").val(code1);
+    }
 });
 $('#p1code').keyup(function(e) {
-	var code1 = $('#p1code').val();
-	code1DataRef.set(code1);
+    var code1 = $('#p1code').val();
+    code1DataRef.set(code1);
 });
 $('#p2code').keyup(function(e) {
-	var code2 = $('#p2code').val();
-	code2DataRef.set(code2);
+    var code2 = $('#p2code').val();
+    code2DataRef.set(code2);
 });
 code2DataRef.on('value', function(snapshot) {
-	$('#p2code').val(snapshot.val());
+    $('#p2code').val(snapshot.val());
 });
 
 $('#messageInput').keypress(function(e) {
-	if(e.keyCode==13) {
-		var msgText = $('#messageInput').val();
-		messagesRef.push({player: userObj.name, text: msgText});
-		$('#messageInput').val('');
-	}
+    if(e.keyCode==13) {
+        var msgText = $('#messageInput').val();
+        messagesRef.push({player: userObj.name, text: msgText});
+        $('#messageInput').val('');
+    }
 });
 messagesRef.on('child_added', function(snapshot) {
-	var message = snapshot.val();
-	displayChatMessage(message.player, message.text);
+    var message = snapshot.val();
+    displayChatMessage(message.player, message.text);
 });
 
 function toggleReady(id) {
-	$(id).toggleClass("greybtn", false);
-	$(id).toggleClass("greenbtn",true);}
+    $(id).toggleClass("greybtn", false);
+    $(id).toggleClass("greenbtn",true);}
 
 function toggleNotReady(id) {
-	$(id).toggleClass("greybtn", true);
-	$(id).toggleClass("greenbtn",false);
+    $(id).toggleClass("greybtn", true);
+    $(id).toggleClass("greenbtn",false);
 }
 
 
 function displayChatMessage(name, text) {
-	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+        $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
         $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 }
 function showGame(){
-	loadLevelCode("py/level21.py", function(){$('#background, #front').fadeOut(200);});	
+    loadLevelCode("py/level21.py", function(){$('#background, #front').fadeOut(200);});    
 }
 function runSimulation(playerScripts, level) {
 	console.log("Running simulation...");
 	$.get( "py/run_simulation.php", { code1: playerScripts[0], code2: playerScripts[1], level: level})
   .done(function( data ) {
+  	console.log("Done!" + data);
   	var queue = data.split("\n");
+  	var json;
   	var i = window.setInterval(function() {
-
+  		json = queue.shift();
+  		if(json === undefined) {
+  			window.clearInterval(i);
+  		} else {
+  			var obj = JSON.parse(json);
+  			console.log(obj);
+  		drawBoardObj(obj);
+  		}
   	}, 400);
   });
 }
@@ -209,165 +217,202 @@ var ctx;
 var noob_mode = true;
 var board = [];
 var prefix = "assets/img/";
-var dict = {"W": "water.png", "L": "grass.png", "wall": "hole.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "scroll": "Scroll0001.png", "slime": "", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red potion": "PotionLargeRose.png", "green potion": "PotionLargeGreen.png", "zuchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png", "unknown":"unknown.png"};
+var dict = {"W": "water.png", "L": "grass.png", "wall": "water.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "scroll": "Scroll0001.png", "slime": "", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red potion": "PotionLargeRose.png", "green potion": "PotionLargeGreen.png", "zuchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png", "unknown":"unknown.png"};
 var images = { };
 var base;
 var tileVariant = [];
-var variantLocs = {};
-
-var neighborLoc = [];
+var variantLocs = {0: {x: 32, y: 96}, 1: {x: 0, y: 160}, 2: {x: 32, y: 160}, 3: {x: 64, y: 160}};
+var directionOffsets = {"N":0, "W":32, "S":64, "E":96};
+var neighborLoc = new Array();
 for(var i=0; i <= 255; i++){
-	neighborLoc[i] = {x: 32, y: 96};
+    neighborLoc[i] = {"x": 32, "y": 96};
 }
-neighborLoc[0x00] = {x: 0, y: 32};
+neighborLoc[0x00] = {"x": 0, "y": 32};
 
-neighborLoc[0x7f] = {x: 32, y: 0};
-neighborLoc[0xdf] = {x: 32, y: 32};
-neighborLoc[0xbf] = {x: 64, y: 0};
-neighborLoc[0xef] = {x: 64, y: 32};
+neighborLoc[0x7f] = {"x": 32, "y": 0};
+neighborLoc[0xdf] = {"x": 32, "y": 32};
+neighborLoc[0xbf] = {"x": 64, "y": 0};
+neighborLoc[0xef] = {"x": 64, "y": 32};
 
-neighborLoc[0x8c] = {x: 0, y: 64};
-neighborLoc[0xad] = {x: 0, y: 96};
-neighborLoc[0x29] = {x: 0, y: 128};
-neighborLoc[0xcd] = {x: 32, y: 64};
-neighborLoc[0x3b] = {x: 32, y: 128};
-neighborLoc[0x46] = {x: 64, y: 64};
-neighborLoc[0x3b] = {x: 64, y: 96};
-neighborLoc[0x13] = {x: 64, y: 128};
+neighborLoc[0x8c] = {"x": 0, "y": 64};
+neighborLoc[0xad] = {"x": 0, "y": 96};
+neighborLoc[0x29] = {"x": 0, "y": 128};
+neighborLoc[0xce] = {"x": 32, "y": 64};
+neighborLoc[0x3b] = {"x": 32, "y": 128};
+neighborLoc[0x46] = {"x": 64, "y": 64};
+neighborLoc[0x37] = {"x": 64, "y": 96};
+neighborLoc[0x13] = {"x": 64, "y": 128};
 
 function tileWidth() {
-	return width/cols;
+    return width/cols;
 }
 function tileHeight() {
-	return height/rows;
+    return height/rows;
 }
 for(var key in dict) {
-	base = new Image();
-	base.src = prefix + dict[key];
-	images[key] = base;
+    base = new Image();
+    base.src = prefix + dict[key];
+    images[key] = base;
 }
 
 
 for(var i=0;i<rows;i++) //Initialize board
 {
-	board[i]=[];
-	tileVariant[i]=[];
-	for(var j=0;j<cols;j++) {
-		board[i][j] = 0;
-		tileVariant[i][j] = Math.floor(Math.random() * 4.0);
-	}
+    board[i]=[];
+    tileVariant[i]=[];
+    for(var j=0;j<cols;j++) {
+        board[i][j] = 0;
+        tileVariant[i][j] = Math.floor(Math.random() * 4.0);
+    }
 }
 
 function drawTile(row,col,key)
 {
-	var startingX = col*tileWidth();
-	var startingY = row*tileHeight();
-	var tv = variantLocs[tileVariant[row][col]];
-	
-	ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
+    var startingX = col*tileWidth();
+    var startingY = row*tileHeight();
+    var tv = variantLocs[tileVariant[row][col]];
+    
+    ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
 }
-function drawTile(row,col,key,neighbors)
+function drawTileEx(row,col,key,neighbors)
 {
-	var startingX = col*tileWidth();
-	var startingY = row*tileHeight();
-	if(neighbors == 15){
-		var tv = variantLocs[tileVariant[row][col]];
-		ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
-	}else{
-		var tv = neighborLoc[neighbors];
-		ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
-	}
+    var startingX = col*tileWidth();
+    var startingY = row*tileHeight();
+    if(neighbors == 15){
+        var tv = variantLocs[tileVariant[row][col]];
+        ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
+    }else{
+        var tv = neighborLoc[neighbors];
+        ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
+    }
 }
-
 function drawSprite(row,col, name){
-	var startingX = col*tileWidth();
-	var startingY = row*tileHeight();
-	ctx.drawImage(images[key], 0, 0, 32, 32,startingX,startingY, tileWidth(),tileHeight());
+    var startingX = col*tileWidth();
+    var startingY = row*tileHeight();
+    ctx.drawImage(images[key], 0, 0, 32, 32,startingX,startingY, tileWidth(),tileHeight());
 };
 function drawSpriteOffset(row,col, offsetX, offsetY, name){
-	var startingX = col*tileWidth();
-	var startingY = row*tileHeight();
-	ctx.drawImage(images[name], offsetX, offsetY, 32, 32,startingX,startingY, tileWidth(),tileHeight());
+    var startingX = col*tileWidth();
+    var startingY = row*tileHeight();
+    ctx.drawImage(images[name], offsetX, offsetY, 32, 32,startingX,startingY, tileWidth(),tileHeight());
 };
+
+
 function drawBoard() {
-	ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-	jQuery.get('../levels/level1.json', function(data) {
-		drawBoardObj(data);
-	});
-
-	if(false) {
-		for(var i=1;i<cols;i++){ //Draw columns
-			ctx.moveTo(width/cols*i, 0);
-			ctx.lineTo(width/cols*i, height);
-			ctx.stroke();
-		}
-		for(var i=1;i<rows;i++){ //Draw rows
-			ctx.moveTo(0,height/rows*i);
-			ctx.lineTo(width, height/rows*i);
-			ctx.stroke();
-		}
-	}
-	if(random) {
-		for(var i=0;i<rows;i++) {
-			for(var j=0;j<cols;j++) {
-				drawTile(i,j,Math.random() < 0.3 ? "W" : Math.random() < 0.9 ? "L" : "wall");
-			}
-		}
-	}
+    jQuery.get('../levels/level9.json', function(data) {
+        drawBoardObj(data);
+    });
+    
+    if(false) {
+        for(var i=1;i<cols;i++){ //Draw columns
+            ctx.moveTo(width/cols*i, 0);
+            ctx.lineTo(width/cols*i, height);
+            ctx.stroke();
+        }
+        for(var i=1;i<rows;i++){ //Draw rows
+            ctx.moveTo(0,height/rows*i);
+            ctx.lineTo(width, height/rows*i);
+            ctx.stroke();
+        }
+    }
+    if(false/*random*/) {
+        for(var i=0;i<rows;i++) {
+            for(var j=0;j<cols;j++) {
+                
+                drawTile(i,j,Math.random() < 0.3 ? "W" : Math.random() < 0.9 ? "L" : "wall");
+            }
+        }
+    }
 }
 
 function drawBoardObj(json) {
-	for(var i=0;i<rows;i++) {
-		for(var j=0;j<cols;j++) {
-			var curr = json[i][j];
-			drawTile(i,j,"L");
-			
-			var neighbors = 0;
-			if(i == 0 || json[i-1][j] == json[i][j])	neighbors &= 0x01;
-			if(j == 0 || json[i][j-1] == json[i][j])	neighbors &= 0x02;
-			if(i == rows || json[i+1][j] == json[i][j])	neighbors &= 0x04;
-			if(j == cols || json[i][j+1] == json[i][j])	neighbors &= 0x08;
-
-			if(i == 0 || j == 0 || json[i-1][j-1] == json[i][j])	neighbors &= 0x10;
-			if(i == 0 || j == cols || json[i-1][j+1] == json[i][j])	neighbors &= 0x20;
-			if(i == rows || j == 0 || json[i+1][j-1] == json[i][j])	neighbors &= 0x40;
-			if(i == rows || j == cols || json[i+1][j+1] == json[i][j])	neighbors &= 0x80;
-			
-			if(curr.entity == "player") {
-				//drawTile(i,j,"L");
-				drawPlayer(i,j,curr.entity.info.name,curr.entity.info.direction);
-			}
-			else if(curr.entity == "water") {
-				drawTile(i,j,"W",neighbors);
-			}
-			else if(curr.entity == "wall") {
-				drawTile(i,j,"wall",neighbors);
-			}
-			else{
-				drawSprite(i,j,curr.entity);
-			}
-		}
+	if(typeof json[0] === 'number') {
+		return;
 	}
+	else if(json.rv !== undefined) {
+		return;
+	} 
+    for(var i=0;i<rows;i++) {
+        for(var j=0;j<cols;j++) {
+            var curr = json[i][j];
+            drawTile(i,j,"L");
+
+            function jsonSame(dRows, dCols, mask){
+                var rowOff = i+dRows < 0 || i+dRows >= rows;
+                var colOff = j+dCols < 0 || j+dCols >= cols;
+                if((rowOff && !colOff) || (colOff && !rowOff)){
+                    neighbors |= mask;
+                }else if(rowOff || colOff){
+                
+                }else if(json[i][j] === null || json[i+dRows][j+dCols] === null){
+
+                }else if(json[i][j].entity == json[i+dRows][j+dCols].entity){
+                    neighbors |= mask;
+                }                    
+            }
+            var neighbors = 0;
+            jsonSame(-1,  0, 0x01);
+            jsonSame( 0, -1, 0x02);
+            jsonSame( 1,  0, 0x04);
+            jsonSame( 0,  1, 0x08);
+            jsonSame(-1, -1, 0x10);
+            jsonSame(-1,  1, 0x20);
+            jsonSame( 1, -1, 0x40);
+            jsonSame( 1,  1, 0x80);
+            
+            /*if(i == 0 || json[i-1][j] == json[i][j])    neighbors |= 0x01;
+            if(j == 0 || json[i][j-1] == json[i][j])    neighbors |= 0x02;
+            if(i == rows || json[i+1][j] == json[i][j])    neighbors |= 0x04;
+            if(j == cols || json[i][j+1] == json[i][j])    neighbors |= 0x08;
+
+            if(i == 0 || j == 0 || json[i-1][j-1] == json[i][j])    neighbors |= 0x10;
+            if(i == 0 || j == cols || json[i-1][j+1] == json[i][j])    neighbors |= 0x20;
+            if(i == rows || j == 0 || json[i+1][j-1] == json[i][j])    neighbors |= 0x40;
+            if(i == rows || j == cols || json[i+1][j+1] == json[i][j])    neighbors |= 0x80;*/
+            
+            if(curr === null){
+            
+            }else if(curr.entity == "player") {
+                drawSpriteOffset(i,j, 0,directionOffsets[curr.info.direction], "player" + curr.info.name);
+                
+                //drawTile(i,j,"L");
+                //drawPlayer(i,j,curr.entity.info.name,curr.entity.info.direction);
+                
+            }
+            else if(curr.entity == "water") {
+                drawTileEx(i,j,"W",neighbors);
+            }
+            else if(curr.entity == "wall") {
+                drawTileEx(i,j,"wall",neighbors);
+            }
+            else{
+                drawSprite(i,j,curr.entity);
+            }
+        }
+    }
 }
 
+
+
 $(document).ready(function(){
-	var canvas = document.getElementById('canvas');
-	canvas.height = height;
-	canvas.width = width;
-	if (canvas.getContext) {
-		ctx = canvas.getContext("2d");
-		drawBoard();
-		window.setTimeout(drawBoard,1000);
-	}
-	$(canvas).mousedown(function myDown(e) 
-	{
-		var position = $(canvas).position();
-		var x = e.pageX-position.left;
-		var y = e.pageY-position.top;
-		var col = Math.floor(x / tileWidth());
-		var row = Math.floor(y / tileHeight());
-	});	
+    var canvas = document.getElementById('canvas');
+    canvas.height = height;
+    canvas.width = width;
+    if (canvas.getContext) {
+        ctx = canvas.getContext("2d");
+        drawBoard();
+        window.setTimeout(drawBoard,1000);
+    }
+    $(canvas).mousedown(function myDown(e) 
+    {
+        var position = $(canvas).position();
+        var x = e.pageX-position.left;
+        var y = e.pageY-position.top;
+        var col = Math.floor(x / tileWidth());
+        var row = Math.floor(y / tileHeight());
+    });    
 });
 </script>
 </body>

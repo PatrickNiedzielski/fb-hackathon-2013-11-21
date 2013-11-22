@@ -38,8 +38,8 @@ if (is_resource($process)) {
     // proc_close in order to avoid a deadlock
     $return_value = proc_close($process);
 
-    echo "{'rv': $return_value}";
+    echo '{"rv": "'.$return_value.'"}';
 } else {
-    echo "NOpe";
+    echo "Nope";
 }
 ?>
