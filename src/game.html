@@ -7,7 +7,7 @@
 <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
 <script language="Javascript" type="text/javascript" src="http://www.cdolivet.com/editarea/editarea/edit_area/edit_area_full.js"></script>
-
+<script src="repl.it/jsrepl/jsrepl.js" id="jsrepl-script"></script>
 <script>
 var useEditArea = false;
 
@@ -104,6 +104,24 @@ function displayChatMessage(name, text) {
 	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
         $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 }
+</script>
+<script>
+  var jsrepl = new JSREPL({  
+    input: function(){},  
+    output: function(out){alert("Output: " + out);},  
+    result: function(res){},  
+    error: function(err){alert("Error: " + err);},  
+    progress: function(prog){}, 
+    timeout: {  
+      time: 30000,  
+      callback: function(){alert("Timeout.");}  
+    }  
+  });  
+
+  jsrepl.loadLanguage('python', function () {  
+    //alert('Python loaded'); 
+	//jsrepl.eval('print "hello world"'); 
+  });	
 </script>
 </body>
 </html>
