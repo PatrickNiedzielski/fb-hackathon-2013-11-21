@@ -40,6 +40,17 @@ class Sign:
     def __repr__(self):
         return "{ \"entity\": \"sign\" }";
 
+class Chest:
+    def __init__(self, position, items):
+        self.position = position
+        self.items = items
+
+    def __repr__(self):
+        return "{ \"entity\": \"chest\" }";
+        
+    def take_item(self):
+        return self.items.pop();
+
 class Slime:
     def __init__(self, position, text):
         self.position = position
