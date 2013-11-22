@@ -145,7 +145,7 @@ class Item:
     def __init__(self, name, position):
         self.position = position
         self.name = name
-        _world.grid[position[1]][position[0]] = self
+        _world.grid[self.position[1]][self.position[0]] = self
 
     def __repr__(self):
         return "{ \"entity\": \"item\", \"info\": {\"name\": " + \
