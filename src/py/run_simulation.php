@@ -6,7 +6,9 @@ $code2 = $_GET['code2'];
 $lines1 = substr_count($code1, "\n")+1;
 $lines2 = substr_count($code2, "\n")+1;
 $levelfile = "level$level".".py";
-file_put_contents('tmp.py', file_get_contents('lib.py').file_get_contents($levelfile).file_get_contents('run.py'));
+$rand = rand(1,1000000);
+$filename = 'tmp' . $rand . '.py';
+file_put_contents($filename, file_get_contents('lib.py').file_get_contents($levelfile).file_get_contents('run.py'));
 
 
 $descriptorspec = array(
@@ -18,7 +20,7 @@ $descriptorspec = array(
 $cwd = '.';
 $env = array('some_option' => 'aeiou');
 
-$process = proc_open('python tmp.py', $descriptorspec, $pipes, $cwd, $env);
+$process = proc_open('python '.$filename, $descriptorspec, $pipes, $cwd, $env);
 
 if (is_resource($process)) {
     // $pipes now looks like this:
@@ -36,7 +38,7 @@ if (is_resource($process)) {
     // proc_close in order to avoid a deadlock
     $return_value = proc_close($process);
 
-    echo "command returned $return_value\n";
+    echo "{'rv': $return_value}";
 } else {
     echo "NOpe";
 }

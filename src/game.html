@@ -100,6 +100,7 @@ var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
 var gameStarted = false;
 var playerOne = false;
+var level = 1;
 rootRef.on('value', function(ss) {
 	console.log(ss.val());
 	if(!gameStarted && ss.val().p1 !== undefined && ss.val().p2 !== undefined) {
@@ -124,7 +125,7 @@ rootRef.on('value', function(ss) {
 	}
 	if(ss.val().p1ready == true && ss.val().p2ready == true) {
 		console.log("Both players are ready, execute the code");
-		runSimulation([$("#p1code").val(), $("#p2code").val()],drawBoardObj,function(err){console.log("Stderr: " + err);});
+		runSimulation([$("#p1code").val(), $("#p2code").val()],level);
 	}
 });
 
@@ -187,6 +188,16 @@ function displayChatMessage(name, text) {
 function showGame(){
 	loadLevelCode("py/level1.py", function(){$('#background, #front').fadeOut(200);});	
 }
+function runSimulation(playerScripts, level) {
+	console.log("Running simulation...");
+	$.get( "py/run_simulation.php", { code1: playerScripts[0], code2: playerScripts[1], level: level})
+  .done(function( data ) {
+  	var queue = data.split("\n");
+  	var i = window.setInterval(function() {
+
+  	}, 400);
+  });
+}
 </script>
 <script>
 var width = 1216;
@@ -198,31 +209,31 @@ var ctx;
 var noob_mode = true;
 var board = [];
 var prefix = "assets/img/";
-var dict = {"W": "water.png", "L": "grass.png", "wall": "hole.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "scroll": "Scroll0001.png", "slime": "", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red potion": "PotionLargeRose.png", "green potion": "PotionLargeGreen.png", "zuchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png"};
-var images = { };
+var dict = {"W": "water.png", "L": "grass.png", "wall": "hole.png"};
+var images = {};
 var base;
 var tileVariant = [];
-var variantLocs = {0: {x: 32, y: 96}, 1: {x: 0, y: 160}, 2: {x: 32, y: 160}, 3: {x: 64, y: 160}};
-var directionOffsets = {"N":0, "W":32, "S":64, "E":96};
-var neighborLoc = new Array();
-for(var i=0; i <= 255; i++){
-	neighborLoc[i] = {"x": 32, "y": 96};
+var variantLocs = {};
+
+neighborLoc = [];
+for(var i=0; i < 255; i++){
+	neighborLoc[i] = {x: 32, y: 96};
 }
-neighborLoc[0x00] = {"x": 0, "y": 32};
+neighborLoc[0x00] = {x: 0, y: 32};
 
-neighborLoc[0x7f] = {"x": 32, "y": 0};
-neighborLoc[0xdf] = {"x": 32, "y": 32};
-neighborLoc[0xbf] = {"x": 64, "y": 0};
-neighborLoc[0xef] = {"x": 64, "y": 32};
+neighborLoc[0x7f] = {x: 32, y: 0};
+neighborLoc[0xdf] = {x: 32, y: 32};
+neighborLoc[0xbf] = {x: 64, y: 0};
+neighborLoc[0xef] = {x: 64, y: 32};
 
-neighborLoc[0x8c] = {"x": 0, "y": 64};
-neighborLoc[0xad] = {"x": 0, "y": 96};
-neighborLoc[0x29] = {"x": 0, "y": 128};
-neighborLoc[0xce] = {"x": 32, "y": 64};
-neighborLoc[0x3b] = {"x": 32, "y": 128};
-neighborLoc[0x46] = {"x": 64, "y": 64};
-neighborLoc[0x37] = {"x": 64, "y": 96};
-neighborLoc[0x13] = {"x": 64, "y": 128};
+neighborLoc[0x8c] = {x: 0, y: 64};
+neighborLoc[0xad] = {x: 0, y: 96};
+neighborLoc[0x29] = {x: 0, y: 128};
+neighborLoc[0xcd] = {x: 32, y: 64};
+neighborLoc[0x3b] = {x: 32, y: 128};
+neighborLoc[0x46] = {x: 64, y: 64};
+neighborLoc[0x3b] = {x: 64, y: 96};
+neighborLoc[0x13] = {x: 64, y: 128};
 
 function tileWidth() {
 	return width/cols;
@@ -255,7 +266,7 @@ function drawTile(row,col,key)
 	
 	ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
 }
-function drawTileEx(row,col,key,neighbors)
+function drawTile(row,col,key,neighbors)
 {
 	var startingX = col*tileWidth();
 	var startingY = row*tileHeight();
@@ -267,23 +278,9 @@ function drawTileEx(row,col,key,neighbors)
 		ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
 	}
 }
-function drawSprite(row,col, name){
-	var startingX = col*tileWidth();
-	var startingY = row*tileHeight();
-	ctx.drawImage(images[key], 0, 0, 32, 32,startingX,startingY, tileWidth(),tileHeight());
-};
-function drawSpriteOffset(row,col, offsetX, offsetY, name){
-	var startingX = col*tileWidth();
-	var startingY = row*tileHeight();
-	ctx.drawImage(images[key], 0, 0, 32, 32,startingX,startingY, tileWidth(),tileHeight());
-};
 function drawBoard() {
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 
-	jQuery.get('../levels/level2.json', function(data) {
-		drawBoardObj(data);
-	});
-	
 	if(false) {
 		for(var i=1;i<cols;i++){ //Draw columns
 			ctx.moveTo(width/cols*i, 0);
@@ -296,10 +293,9 @@ function drawBoard() {
 			ctx.stroke();
 		}
 	}
-	if(false/*random*/) {
+	if(random) {
 		for(var i=0;i<rows;i++) {
 			for(var j=0;j<cols;j++) {
-				
 				drawTile(i,j,Math.random() < 0.3 ? "W" : Math.random() < 0.9 ? "L" : "wall");
 			}
 		}
@@ -315,54 +311,27 @@ function drawBoardObj(json) {
 		for(var j=0;j<cols;j++) {
 			var curr = json[i][j];
 			drawTile(i,j,"L");
-
-			function jsonSame(dRows, dCols, mask){
-				var rowOff = i+dRows < 0 || i+dRows >= rows;
-				var colOff = j+dCols < 0 || j+dCols >= cols;
-				if((rowOff && !colOff) || (colOff && !rowOff)){
-					neighbors |= mask;
-				}else if(rowOff || colOff){
-				
-				}else if(json[i][j] === null || json[i+dRows][j+dCols] === null){
-
-				}else if(json[i][j].entity == json[i+dRows][j+dCols].entity){
-					neighbors |= mask;
-				}					
-			}
+			
 			var neighbors = 0;
-			jsonSame(-1,  0, 0x01);
-			jsonSame( 0, -1, 0x02);
-			jsonSame( 1,  0, 0x04);
-			jsonSame( 0,  1, 0x08);
-			jsonSame(-1, -1, 0x10);
-			jsonSame(-1,  1, 0x20);
-			jsonSame( 1, -1, 0x40);
-			jsonSame( 1,  1, 0x80);
-			
-			/*if(i == 0 || json[i-1][j] == json[i][j])	neighbors |= 0x01;
-			if(j == 0 || json[i][j-1] == json[i][j])	neighbors |= 0x02;
-			if(i == rows || json[i+1][j] == json[i][j])	neighbors |= 0x04;
-			if(j == cols || json[i][j+1] == json[i][j])	neighbors |= 0x08;
+			if(i == 0 || json[i-1][j] == json[i][j])	neighbors &= 0x01;
+			if(j == 0 || json[i][j-1] == json[i][j])	neighbors &= 0x02;
+			if(i == rows || json[i+1][j] == json[i][j])	neighbors &= 0x04;
+			if(j == cols || json[i][j+1] == json[i][j])	neighbors &= 0x08;
 
-			if(i == 0 || j == 0 || json[i-1][j-1] == json[i][j])	neighbors |= 0x10;
-			if(i == 0 || j == cols || json[i-1][j+1] == json[i][j])	neighbors |= 0x20;
-			if(i == rows || j == 0 || json[i+1][j-1] == json[i][j])	neighbors |= 0x40;
-			if(i == rows || j == cols || json[i+1][j+1] == json[i][j])	neighbors |= 0x80;*/
+			if(i == 0 || j == 0 || json[i-1][j-1] == json[i][j])	neighbors &= 0x10;
+			if(i == 0 || j == cols || json[i-1][j+1] == json[i][j])	neighbors &= 0x20;
+			if(i == rows || j == 0 || json[i+1][j-1] == json[i][j])	neighbors &= 0x40;
+			if(i == rows || j == cols || json[i+1][j+1] == json[i][j])	neighbors &= 0x80;
 			
-			if(curr === null){
-			
-			}else if(curr.entity == "player") {
-				drawSpriteOffset(i,j, 0,directionOffsets[curr.info.direction], "player" + curr.info.name);
-				
+			if(curr.entity == "player") {
 				//drawTile(i,j,"L");
-				//drawPlayer(i,j,curr.entity.info.name,curr.entity.info.direction);
-				
+				drawPlayer(i,j,curr.entity.info.name,curr.entity.info.direction);
 			}
 			else if(curr.entity == "water") {
-				drawTileEx(i,j,"W",neighbors);
+				drawTile(i,j,"W",neighbors);
 			}
 			else if(curr.entity == "wall") {
-				drawTileEx(i,j,"wall",neighbors);
+				drawTile(i,j,"wall",neighbors);
 			}
 		}
 	}
