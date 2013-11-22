@@ -57,14 +57,14 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
     <button id="p2s" class="greybtn">Player 2: Ready?</button>
     </div>
     <div id="map">
-    <canvas id="canvas" style="border: 1px solid black;"></canvas>
+    <canvas id="canvas" style="border: 1px solid black; background-color: black"></canvas>
     </div>
 </div>
 <div id="sidebar">
 <button id="jump">Jump to Level!</button>
 <h2>Level <span id="lvlNum"></span></h2>
 <h3>Objective</h3>
-Get player 1 to the center before player 2 does!
+<div id="objective"></div>
 <h2>Chat</h2>
 <div id="messagesDiv">
 <input type="text" id="messageInput" placeholder="Message" />
@@ -211,7 +211,7 @@ var ctx;
 var noob_mode = true;
 var board = [];
 var prefix = "assets/img/";
-var dict = {"W": "water.png", "L": "grass.png", "wall": "water.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "scroll": "Scroll0001.png", "slime": "", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red potion": "PotionLargeRose.png", "green potion": "PotionLargeGreen.png", "zuchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png", "unknown":"unknown.png"};
+var dict = {"W": "water.png", "L": "grass.png", "wall": "water.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "sign": "Scroll0001.png", "slime": "", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red potion": "PotionLargeRose.png", "green potion": "PotionLargeGreen.png", "zuchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png", "unknown":"unknown.png"};
 var images = { };
 var base;
 var tileVariant = [];
@@ -283,7 +283,7 @@ function drawTileEx(row,col,key,neighbors)
 function drawSprite(row,col, name){
     var startingX = col*tileWidth();
     var startingY = row*tileHeight();
-    ctx.drawImage(images[key], 0, 0, 32, 32,startingX,startingY, tileWidth(),tileHeight());
+    ctx.drawImage(images[name], 0, 0, 32, 32,startingX,startingY, tileWidth(),tileHeight());
 };
 function drawSpriteOffset(row,col, offsetX, offsetY, name){
     var startingX = col*tileWidth();
@@ -298,18 +298,21 @@ function loadLevel(levelNum) {
     rootRef.child('level').set(currentLevel);
     jQuery.get('../levels/level' + levelNum + '.json', function(data) {
         drawBoardObj(data);
+        $("#objective").html(data[rows][1]);
     });
     $("#lvlNum").html(levelNum == "2_1" ? "1&#189;" : levelNum);
+
 
 }
 
 function drawBoardObj(json) {
 	if(typeof json[0] === 'number') {
-		return;
+		
 	}
 	else if(json.rv !== undefined) {
 		if(json.rv == 0) {
-            alert("You win!");
+            alert('You win!');
+            //$('#background, #front').fadeIn(200).delay(400).fadeOut(200);
             if(currentLevel == 1) {
                 nextLevel = "2_1";
             }
@@ -321,7 +324,8 @@ function drawBoardObj(json) {
             }
         }
         else {
-            alert("Sorry, try again!");
+            $('#front').html('Sorry, try again!');
+            $('#background, #front').fadeIn(200).delay(400).fadeOut(200);
             nextLevel = currentLevel;
         }
 	} 
