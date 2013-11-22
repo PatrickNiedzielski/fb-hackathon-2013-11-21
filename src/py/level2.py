@@ -1,4 +1,4 @@
-# Learn Python -- script loading and running
+# Learn Python -- level 2 logic
 # Copyright (C) 2013 Cornell FB Hackathon Team.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,26 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-print str(_world.grid)
+player1._position = [5, 6];
+player2._position = [14, 6];
 
-_script1_length = input()
-_script1 = ""
-for i in range(_script1_length):
-    _script1 += raw_input() + "\n"
-_script2_length = input()
-_script2 = ""
-for i in range(_script2_length):
-    _script2 += raw_input() + "\n"
+sign1 = Sign([2, 4], "Face")
+sign2 = Sign([13, 7], "Book")
 
-def run_script1():
-    exec _script1
-
-def run_script2():
-    exec _script2
-
-gevent.joinall([
-    gevent.spawn(lambda: Player._run_script(player1, _script1)),
-    gevent.spawn(lambda: Player._run_script(player2, _script2)),
-])
-
-at_end()
+def at_end:
+    if (player1._messages.count("Face") == 0 and \
+        player1._messages.count("Book") == 0 or \
+        player2._messages.count("Face") == 0 and \
+        player2._messages.count("Book") == 0):
+        raise Exception("Failure")

@@ -114,7 +114,7 @@ rootRef.on('value', function(ss) {
 			$("#p2code").prop("disabled",true);
 			$("#p1s").prop("disabled",true);
 		}
-		$('#background, #front').fadeOut(200);
+		//$('#background, #front').fadeOut(200);
 	}
 	if(ss.val().p1ready == true && ss.val().p2ready == true) {
 		console.log("Both players are ready, execute the code");
@@ -171,6 +171,9 @@ function toggleReady(id) {
 function displayChatMessage(name, text) {
 	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
         $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+}
+function showGame(){
+	$('#background, #front').fadeOut(200);
 }
 </script>
 <script>

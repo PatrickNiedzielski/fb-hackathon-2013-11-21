@@ -1,4 +1,7 @@
-	var simulationCode;
+
+	var simulationCode = null;
+	var levelCode = null;
+	var runCode = null;
 	
 	var jsrepl = new JSREPL({  
 	input: function(inp){inp("[none]\n")},  
@@ -6,25 +9,35 @@
 	result: function(res){},
 	error: function(err){alert("Error: " + err);},  
 	progress: function(prog){}, 
-	timeout: {  
+	timeout: {
 		time: 30000,  
-		callback: function(){alert("Timeout.");}  
+		callback: function(){alert("Timeout."); return true; /*true = don't call again*/ }  
 	}  
 	});
-
+	
 	jsrepl.loadLanguage('python', function () { 
 
 		//alert('Python loaded'); 
 		//jsrepl.eval('print "hello"');
-		jQuery.get('pythonCode.py', function(data) {
+		jQuery.get('py/lib.py', function(data) {
 			simulationCode = data;
-			//jsrepl.eval(simulationCode);
-			//runSimulation("abc\ndef", "def\nghi", function(inp){alert(inp);}, function(err){});
+			jQuery.get('py/run.py', function(data) {
+				runCode = data;
+				showGame();
+			});
 		});
+
+		//runSimulation("abc\ndef", "def\nghi", function(inp){alert(inp);}, function(err){});
 	});
   
-	function runSimulation(p1_code, p2_code, inputFunc, errorFunc){
-		
+	function loadLevelCode(level, startLevelFunc){
+		jQuery.get(level, function(data) {
+			levelCode = data;
+			startLevelFunc();
+		});
+	}
+  
+	function runSimulation(p1_code, p2_code, inputFunc, errorFunc){		
 		var p1_lines = 1;
 		for(var i=0; i < p1_code.length; i++){
 			if(p1_code.charAt(i) == "\n"){
@@ -85,12 +98,7 @@
 		jsrepl.off("error");
 		jsrepl.on("error", function(err){
 			errorFunc(err);
-		
-		//	if(/^Exception: Collision$/g.test(err)){
-		//		//report collision
-		//	}else{
-		//		
-		//	}
+			//if(/^Exception: Collision$/g.test(err)){}
 		});
 	
 		
