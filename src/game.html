@@ -63,7 +63,6 @@ var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
 
 $("#p1code").on("keyup",function(e) {
-	alert("Hi!");
 	var code1 = editAreaLoader.getValue("p1code");
 	code1DataRef.set(code1);
 });
