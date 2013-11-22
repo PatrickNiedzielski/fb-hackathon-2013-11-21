@@ -141,5 +141,3 @@ class Player:
 player1 = Player(1, [1, 0])
 player2 = Player(2, [0, 1], player1)
 player1.other = player2
-
-print _sub_none(repr(_world.grid))
