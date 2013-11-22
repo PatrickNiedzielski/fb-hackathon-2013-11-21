@@ -22,7 +22,13 @@ _east = [1, 0]
 _west = [-1, 0]
 
 class World:
-    grid = [[None, None, None], [None, None, None], [None, None, None]]
+    def __init__(self):
+        self.grid = []
+        for i in range(11):
+            row = [];
+            for j in range(19):
+                row.append(None)
+                self.grid.append(row)
 
 _world = World()
 
@@ -45,6 +51,7 @@ class Wall:
 
 class Player:
     _direction = [0, 1]
+    _messages = []
 
     def __init__(self, name, position, other_ = None):
         self._name = name
@@ -118,6 +125,7 @@ class Player:
 
     def say(self, message):
         print str([self._name, message]);
+        _messages.append(message)
         gevent.sleep(0)
 
     def get_in_front(self):
@@ -127,7 +135,7 @@ class Player:
             raise Exception("Outside Map")
         return _world.grid[temppos[1]][temppos[0]]
 
+# Positions should be overridden in each level script
 player1 = Player(1, [1, 0])
 player2 = Player(2, [0, 1], player1)
 player1.other = player2
-print str(_world.grid)

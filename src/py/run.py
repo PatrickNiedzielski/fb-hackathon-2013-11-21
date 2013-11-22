@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+print str(_world.grid)
+
 _script1_length = input()
 _script1 = ""
 for i in range(_script1_length):
@@ -33,3 +35,5 @@ gevent.joinall([
     gevent.spawn(lambda: Player._run_script(player1, _script1)),
     gevent.spawn(lambda: Player._run_script(player2, _script2)),
 ])
+
+at_end()
