@@ -72,12 +72,12 @@ editAreaLoader.init({
 <h1>Learn Python!</h1>
 <div id="main">
 	<div id="code-left">
-	<textarea id="p1code" /></textarea><br />
-	<button id="p1s" class="not-ready">Player 1: Ready?</button>
+	<textarea id="p1code" class="code" /></textarea><br />
+	<button id="p1s" class="greybtn">Player 1: Ready?</button>
 	</div>
 	<div id="code-right">
-	<textarea id="p2code" /></textarea><br />
-	<button id="p2s" class="not-ready">Player 2: Ready?</button>
+	<textarea id="p2code" class="code" /></textarea><br />
+	<button id="p2s" class="greybtn">Player 2: Ready?</button>
 	</div>
 	<div id="map">
 	<canvas id="canvas" style="border: 1px solid black;"></canvas>
@@ -99,24 +99,38 @@ var code1DataRef = new Firebase(gameRoot + "/p1code");
 var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
 var gameStarted = false;
+var playerOne = false;
 rootRef.on('value', function(ss) {
 	console.log(ss.val());
 	if(!gameStarted && ss.val().p1 !== undefined && ss.val().p2 !== undefined) {
 		gameStarted = true;
 		if(userObj.id != ss.val().p1) {
+			playerOne = false;
 			$("#p1code").prop("disabled",true);
 			$("#p1s").prop("disabled",true);
 		}
 		if(userObj.id != ss.val().p2) {
+			playerOne = true;
 			$("#p2code").prop("disabled",true);
 			$("#p1s").prop("disabled",true);
 		}
-		$('#background, #front').fadeOut(200);
+		//$('#background, #front').fadeOut(200);
+	}
+	if(ss.val().p1ready == true && ss.val().p2ready == true) {
+		console.log("Both players are ready, execute the code");
 	}
 });
 $("#p1code").on("keyup",function(e) {
 	var code1 = editAreaLoader.getValue("p1code");
 	code1DataRef.set(code1);
+});
+$("#p1s").on('click', function() {
+	toggleReady("#p1s");
+	rootRef.child('p1ready').set(true);
+});
+$("#p2s").on('click', function() {
+	toggleReady("#p2s");
+	rootRef.child('p2ready').set(true);
 });
 
 code1DataRef.on('value', function(snapshot) {
@@ -140,7 +154,7 @@ code2DataRef.on('value', function(snapshot) {
 $('#messageInput').keypress(function(e) {
 	if(e.keyCode==13) {
 		var msgText = $('#messageInput').val();
-		messagesRef.push({player: 1, text: msgText});
+		messagesRef.push({player: userObj.name, text: msgText});
 		$('#messageInput').val('');
 	}
 });
@@ -149,12 +163,17 @@ messagesRef.on('child_added', function(snapshot) {
 	displayChatMessage(message.player, message.text);
 });
 
-
+function toggleReady(id) {
+	$(id).toggleClass("greybtn", false);
+	$(id).toggleClass("greenbtn",true);}
 
 
 function displayChatMessage(name, text) {
 	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
         $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+}
+function showGame(){
+	$('#background, #front').fadeOut(200);
 }
 </script>
 <script>
