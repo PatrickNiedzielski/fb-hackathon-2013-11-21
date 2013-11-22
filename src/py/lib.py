@@ -85,7 +85,6 @@ class Player:
         self._name = name
         self._position = position
         other = other_
-        _world.grid[position[1]][position[0]] = self
 
     def __repr__(self):
         str_dirs = { tuple(_north) : "N", tuple(_south) : "S",
