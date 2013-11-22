@@ -64,7 +64,7 @@ class Player:
         str_dir = str_dirs[tuple(self._direction)]
         return "{ \"entity\": \"player\", " + \
             "\"info\": {\"name\": " + str(self._name) + \
-            ", \"direction\": " + str_dir + "}}"
+            ", \"direction\": \"" + str_dir + "\"}}"
 
     def _turn_dir(self, dir):
         self._direction = dir
@@ -104,28 +104,28 @@ class Player:
 
     def move_left(self, num = 1):
         if num > 4:
-            throw "Can't jump that far"
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_west)
         gevent.sleep(0)
 
     def move_right(self, num = 1):
         if num > 4:
-            throw "Can't jump that far"
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_east)
         gevent.sleep(0)
 
     def move_up(self, num = 1):
         if num > 4:
-            throw "Can't jump that far"
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_north)
         gevent.sleep(0)
 
     def move_down(self, num = 1):
         if num > 4:
-            throw "Can't jump that far"
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_south)
         gevent.sleep(0)
