@@ -148,8 +148,8 @@ class Item:
         _world.grid[self.position[1]][self.position[0]] = self
 
     def __repr__(self):
-        return "{ \"entity\": \"item\", \"info\": {\"name\": " + \
-            self.name + "}}"
+        return "{ \"entity\": \"item\", \"info\": {\"name\": \"" + \
+            self.name + "\"}}"
 
 class Player:
     _direction = [0, 1]
