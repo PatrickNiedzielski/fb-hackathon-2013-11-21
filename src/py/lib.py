@@ -153,6 +153,7 @@ class Item:
 class Player:
     _direction = [0, 1]
     _messages = []
+    _dropWall = False
 
     def __init__(self, name, position, other_ = None):
         self._name = name
@@ -197,7 +198,10 @@ class Player:
             raise Exception("Outside Map")
         if (_world.grid[temppos[1]][temppos[0]] != None):
             raise Exception("Collision")
-        _world.grid[self._position[1]][self._position[0]] = None
+            if _dropWall:
+                _world.grid[self._position[1]][self._position[0]] = Wall([self._position[1]][self._position[0]])
+            else:
+                _world.grid[self._position[1]][self._position[0]] = None
         self._position = temppos
         _world.grid[self._position[1]][self._position[0]] = self
         self._turn_dir(dir);
