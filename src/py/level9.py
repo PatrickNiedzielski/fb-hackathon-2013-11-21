@@ -20,27 +20,27 @@ player2._position = [18, 0];
 _world.grid[player2._position[1]][player2._position[0]] = player2
 
 walls = []
-for i in range(0, 10):
+for i in range(0, 11):
     walls.append(Wall([1, i]))
-for i in range(2, 15):
+for i in range(2, 16):
     walls.append(Wall([i, 1]))
-for i in range(2, 7):
+for i in range(2, 8):
     walls.append(Wall([15, i]))
-for i in range(5, 14):
+for i in range(5, 15):
     walls.append(Wall([i, 7]))
-for i in range(5, 6):
+for i in range(5, 7):
     walls.append(Wall([5, i]))
-for i in range(6, 13):
+for i in range(6, 14):
     walls.append(Wall([i, 5]))
-for i in range(3, 4):
+for i in range(3, 5):
     walls.append(Wall([13, i]))
-for i in range(3, 12):
+for i in range(3, 13):
     walls.append(Wall([i, 3]))
-for i in range(4, 9):
+for i in range(4, 10):
     walls.append(Wall([3, i]))
-for i in range(4, 17):
+for i in range(4, 18):
     walls.append(Wall([i, 9]))
-for i in range(0, 8):
+for i in range(0, 9):
     walls.append(Wall([17, i]))
 
 def at_end():
