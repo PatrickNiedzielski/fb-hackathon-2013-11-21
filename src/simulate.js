@@ -11,30 +11,29 @@
 		callback: function(){alert("Timeout.");}  
 	}  
 	});
-  
-	jsrepl.loadLanguage('python', function () {  
+
+	jsrepl.loadLanguage('python', function () { 
+
 		//alert('Python loaded'); 
-		jsrepl.eval('print "hello"');
+		//jsrepl.eval('print "hello"');
 		jQuery.get('pythonCode.py', function(data) {
 			simulationCode = data;
 			//jsrepl.eval(simulationCode);
+			//runSimulation("abc\ndef", "def\nghi", function(inp){alert(inp);}, function(err){});
 		});
 	});
   
-
-
-
-	var runSimulation = function(p1_code, p2_code){
+	function runSimulation(p1_code, p2_code, inputFunc, errorFunc){
 		
-		var p1_lines = 0;
-		for(int i=0; i < p1_code.length; i++){
+		var p1_lines = 1;
+		for(var i=0; i < p1_code.length; i++){
 			if(p1_code.charAt(i) == "\n"){
 				p1_lines++;
 			}	
 		}
 		
-		var p2_lines = 0;
-		for(int i=0; i < p2_code.length; i++){
+		var p2_lines = 1;
+		for(var i=0; i < p2_code.length; i++){
 			if(p2_code.charAt(i) == "\n"){
 				p2_lines++;
 			}	
@@ -45,7 +44,55 @@
 			jsrepl.on("input", function(inp){inp("[none]\n");});
 		});
 		
+		var inputBufferReading = false;
+		var inputBuffer = "";
+		jsrepl.off("output");
+		jsrepl.on("output", function(out){
+			while(out.length > 0){
+				if(inputBufferReading && out.charCodeAt(0) == 0x11){
+					inputBufferReading = false;
+					out = out.substr(1);
+				}else if(out.charCodeAt(0) == 0x11){
+					inputBufferReading = true;
+					out = out.substr(1);
+				}else if(inputBufferReading){
+					var index = out.indexOf(String.fromCharCode(0x11));
+					if(index == -1){
+						inputBuffer = inputBuffer + out;
+						out = "";
+					}else{
+					
+						inputFunc(inputBuffer + out.substring(0, index));
+						inputBuffer = "";
+						inputBufferReading = false;
+						
+						out = out.substring(index + 1);
+					}
+				}else{
+					var index = out.indexOf(String.fromCharCode(0x11));
+					if(index == -1){
+						out = "";
+					}else{
+						out = out.substring(index);
+					}
+				}
+			}
+		});
+		
+		jsrepl.off("result");
+		jsrepl.on("result", function(res){});
+		
+		jsrepl.off("error");
+		jsrepl.on("error", function(err){
+			errorFunc(err);
+		
+		//	if(/^Exception: Collision$/g.test(err)){
+		//		//report collision
+		//	}else{
+		//		
+		//	}
+		});
+	
+		
 		jsrepl.eval(simulationCode);
-		
-		
 	}
