@@ -6,6 +6,33 @@
 </style>
 <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script language="Javascript" type="text/javascript" src="http://www.cdolivet.com/editarea/editarea/edit_area/edit_area_full.js"></script>
+<script>
+var useEditArea = false;
+
+if(useEditArea) {
+editAreaLoader.init({
+			id: "p1code"	// id of the textarea to transform		
+			,start_highlight: true	// if start with highlight
+			,allow_resize: "no"
+			,allow_toggle: false
+			,word_wrap: true
+			,language: "en"
+			,syntax: "python"	
+		});
+
+editAreaLoader.init({
+			id: "p2code"	// id of the textarea to transform		
+			,start_highlight: true	// if start with highlight
+			,allow_resize: "no"
+			,allow_toggle: false
+			,word_wrap: true
+			,language: "en"
+			,syntax: "python"	
+		});
+}
+
+</script>
 </head>
 <body>
 <div id="main">
@@ -30,17 +57,32 @@
 var root = "https://learn-python.firebaseIO.com";
 var gameRoot = root;
 var rootRef = new Firebase(gameRoot + "/");
-var code1DataRef = new Firebase(gameRoot + "/code1");
+var code1DataRef = new Firebase(gameRoot + "/p1code");
+var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
 
-$('#p1code').keypress(function(e) {
-	var code1 = $('#p1code').val();
-	rootRef.set({p1code: code1});
+$("#p1code").on("keyup",function(e) {
+	alert("Hi!");
+	var code1 = editAreaLoader.getValue("p1code");
+	code1DataRef.set(code1);
 });
 
-$('#p2code').keypress(function(e) {
-	var code1 = $('#p1code').val();
-	rootRef.set({p1code: code1});
+code1DataRef.on('value', function(snapshot) {
+	var code1 = snapshot.val();
+	if(useEditArea) {
+	editAreaLoader.setValue("p1code", code1);
+	}
+	else {
+		$("#p1code").val(code1);
+	}
+});
+
+$('#p2code').keyup(function(e) {
+	var code2 = $('#p2code').val();
+	code2DataRef.set(code2);
+});
+code2DataRef.on('value', function(snapshot) {
+	$('#p2code').val(snapshot.val());
 });
 
 $('#messageInput').keypress(function(e) {
@@ -55,9 +97,7 @@ messagesRef.on('child_added', function(snapshot) {
 	displayChatMessage(message.player, message.text)
 });
 
-code1DataRef.on('value', function(snapshot) {
-	$('#p1code').val(snapshot.val());
-});
+
 
 function displayChatMessage(name, text) {
 	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
