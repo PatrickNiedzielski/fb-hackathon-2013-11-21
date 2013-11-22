@@ -110,7 +110,7 @@ rootRef.on('value', function(ss) {
 			$("#p1s").prop("disabled",true);
 		}
 		if(userObj.id != ss.val().p2) {
-			playerOne = true;
+			playerOne = 
 			$("#p2code").prop("disabled",true);
 			$("#p1s").prop("disabled",true);
 		}
@@ -174,10 +174,10 @@ function displayChatMessage(name, text) {
 }
 </script>
 <script>
-var width = 900;
+var width = 1036;
 var height = 600;
-var cols = 45;
-var rows = 30;
+var cols = 19;
+var rows = 11;
 var random = true;
 var ctx;
 var noob_mode = true;
@@ -235,6 +235,9 @@ function drawBoard() {
 				drawTile(i,j,Math.random() < 0.5 ? "W" : "L");
 			}
 		}
+	}
+	else {
+
 	}
 }
 
