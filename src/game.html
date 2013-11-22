@@ -26,6 +26,9 @@ if(id==null) {
 }
 var root = "https://learn-python.firebaseIO.com";
 var rootRef = new Firebase(root + "/");
+function createLevelRef(i) {
+    return new Firebase(root + "/level/" + i + "/");
+}
 var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
   if (error) {
     // an error occurred while attempting login
@@ -38,32 +41,6 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
     document.location="index.html";
   }
 });
-</script>
-<script>
-var useEditArea = false;
-
-if(useEditArea) {
-editAreaLoader.init({
-            id: "p1code"    // id of the textarea to transform        
-            ,start_highlight: true    // if start with highlight
-            ,allow_resize: "no"
-            ,allow_toggle: false
-            ,word_wrap: true
-            ,language: "en"
-            ,syntax: "python"    
-        });
-
-editAreaLoader.init({
-            id: "p2code"    // id of the textarea to transform        
-            ,start_highlight: true    // if start with highlight
-            ,allow_resize: "no"
-            ,allow_toggle: false
-            ,word_wrap: true
-            ,language: "en"
-            ,syntax: "python"    
-        });
-}
-
 </script>
 </head>
 <body>
@@ -84,6 +61,7 @@ editAreaLoader.init({
     </div>
 </div>
 <div id="sidebar">
+<button id="jump">Jump to Level!</button>
 <h2>Level</h2>
 <h3>Objective</h3>
 Get player 1 to the center before player 2 does!
@@ -100,6 +78,8 @@ var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
 var gameStarted = false;
 var playerOne = false;
+var nextLevel;
+var currentLevel;
 rootRef.on('value', function(ss) {
     console.log(ss.val());
     if(!gameStarted && ss.val().p1 !== undefined && ss.val().p2 !== undefined) {
@@ -124,7 +104,14 @@ rootRef.on('value', function(ss) {
     }
     if(ss.val().p1ready == true && ss.val().p2ready == true) {
         console.log("Both players are ready, execute the code");
-        runSimulation([$("#p1code").val(), $("#p2code").val()],9);
+        runSimulation([$("#p1code").val(), $("#p2code").val()],currentLevel);
+    }
+});
+
+rootRef.child('level').on('value', function(ss) {
+    console.log(ss.val());
+    if(currentLevel != ss.val() && ss.val() != null) {
+        loadLevel(ss.val());
     }
 });
 
@@ -138,13 +125,10 @@ $("#p2s").on('click', function() {
 });
 
 code1DataRef.on('value', function(snapshot) {
-    var code1 = snapshot.val();
-    if(useEditArea) {
-    editAreaLoader.setValue("p1code", code1);
-    }
-    else {
-        $("#p1code").val(code1);
-    }
+    $("#p1code").val(snapshot.val());
+});
+code2DataRef.on('value', function(snapshot) {
+    $('#p2code').val(snapshot.val());
 });
 $('#p1code').keyup(function(e) {
     var code1 = $('#p1code').val();
@@ -154,9 +138,7 @@ $('#p2code').keyup(function(e) {
     var code2 = $('#p2code').val();
     code2DataRef.set(code2);
 });
-code2DataRef.on('value', function(snapshot) {
-    $('#p2code').val(snapshot.val());
-});
+
 
 $('#messageInput').keypress(function(e) {
     if(e.keyCode==13) {
@@ -184,9 +166,8 @@ function displayChatMessage(name, text) {
         $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
         $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 }
-function showGame(){
-    loadLevelCode("py/level21.py", function(){$('#background, #front').fadeOut(200);});    
-}
+
+
 function runSimulation(playerScripts, level) {
 	console.log("Running simulation...");
 	$.get( "py/run_simulation.php", { code1: playerScripts[0], code2: playerScripts[1], level: level})
@@ -198,13 +179,26 @@ function runSimulation(playerScripts, level) {
   		json = queue.shift();
   		if(json === undefined) {
   			window.clearInterval(i);
+            rootRef.child('p1ready').set(false);
+            rootRef.child('p2ready').set(false);
+            toggleNotReady('#p1s');
+            toggleNotReady('#p2s');
+            loadLevel(nextLevel);
+
   		} else {
   			var obj = JSON.parse(json);
   			console.log(obj);
-  		drawBoardObj(obj);
+  		    drawBoardObj(obj);
   		}
   	}, 400);
   });
+}
+function jumpToLevel(i) {
+    rootRef.child('p1ready').set(false);
+    rootRef.child('p2ready').set(false);
+    toggleNotReady('#p1s');
+    toggleNotReady('#p2s');
+    loadLevel(i);
 }
 </script>
 <script>
@@ -298,33 +292,13 @@ function drawSpriteOffset(row,col, offsetX, offsetY, name){
 };
 
 
-function drawBoard() {
+function loadLevel(levelNum) {
     ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    jQuery.get('../levels/level9.json', function(data) {
+    currentLevel = levelNum;
+    rootRef.child('level').set(currentLevel);
+    jQuery.get('../levels/level' + levelNum + '.json', function(data) {
         drawBoardObj(data);
     });
-    
-    if(false) {
-        for(var i=1;i<cols;i++){ //Draw columns
-            ctx.moveTo(width/cols*i, 0);
-            ctx.lineTo(width/cols*i, height);
-            ctx.stroke();
-        }
-        for(var i=1;i<rows;i++){ //Draw rows
-            ctx.moveTo(0,height/rows*i);
-            ctx.lineTo(width, height/rows*i);
-            ctx.stroke();
-        }
-    }
-    if(false/*random*/) {
-        for(var i=0;i<rows;i++) {
-            for(var j=0;j<cols;j++) {
-                
-                drawTile(i,j,Math.random() < 0.3 ? "W" : Math.random() < 0.9 ? "L" : "wall");
-            }
-        }
-    }
 }
 
 function drawBoardObj(json) {
@@ -332,7 +306,14 @@ function drawBoardObj(json) {
 		return;
 	}
 	else if(json.rv !== undefined) {
-		return;
+		if(json.rv == 0) {
+            alert("You win!");
+            nextLevel = currentLevel + 1;
+        }
+        else {
+            alert("Sorry, try again!");
+            nextLevel = currentLevel;
+        }
 	} 
     for(var i=0;i<rows;i++) {
         for(var j=0;j<cols;j++) {
@@ -402,8 +383,6 @@ $(document).ready(function(){
     canvas.width = width;
     if (canvas.getContext) {
         ctx = canvas.getContext("2d");
-        drawBoard();
-        window.setTimeout(drawBoard,1000);
     }
     $(canvas).mousedown(function myDown(e) 
     {

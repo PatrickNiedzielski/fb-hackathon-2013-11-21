@@ -103,7 +103,7 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
     		}
     	} else {
     		id = Math.round(Math.random() * 1000000);
-    		gamesRef.child(id).set({messages: null, p1code: "", p2code: "", p1: user.id, p2: null});
+    		gamesRef.child(id).set({messages: null, p1code: "", p2code: "", p1: user.id, p2: null, level: 1});
     		waitingGamesRef.child(id).set(true);
     		window.setInterval(goToGame,1000);
 	    }

@@ -42,4 +42,5 @@ if (is_resource($process)) {
 } else {
     echo "Nope";
 }
+shell_exec('rm tmp*');
 ?>
