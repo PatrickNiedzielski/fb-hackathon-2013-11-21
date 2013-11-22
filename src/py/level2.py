@@ -15,7 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 player1._position = [5, 6];
+_world.grid[player1._position[1]][player1._position[0]] = player1
 player2._position = [14, 6];
+_world.grid[player2._position[1]][player2._position[0]] = player2
 
 sign1 = Sign([2, 4], "Face")
 sign2 = Sign([13, 7], "Book")
@@ -26,3 +28,4 @@ def at_end():
         player2._messages.count("Face") == 0 and \
         player2._messages.count("Book") == 0):
         raise Exception("Failure")
+
