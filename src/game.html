@@ -11,7 +11,7 @@
 </script>
 <script language="Javascript" type="text/javascript" src="http://www.cdolivet.com/editarea/editarea/edit_area/edit_area_full.js"></script>
 <script src="repl.it/jsrepl/jsrepl.js" id="jsrepl-script"></script>
-<script src="simulate.js"></script>
+<!--<script src="simulate.js"></script> -->
 <script>
 var userObj;
 function getParameterByName(name) {
@@ -115,7 +115,7 @@ rootRef.on('value', function(ss) {
 			$("#p2code").prop("disabled",true);
 			$("#p2s").prop("disabled",true);
 		}
-		//$('#background, #front').fadeOut(200);
+		$('#background, #front').fadeOut(200);
 	}
 	if(ss.val().p1ready == true) {
 		toggleReady("#p1s");
@@ -186,7 +186,7 @@ function displayChatMessage(name, text) {
         $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
 }
 function showGame(){
-	loadLevelCode("py/level1.py", function(){$('#background, #front').fadeOut(200);});	
+	loadLevelCode("py/level21.py", function(){$('#background, #front').fadeOut(200);});	
 }
 function runSimulation(playerScripts, level) {
 	console.log("Running simulation...");
@@ -209,14 +209,14 @@ var ctx;
 var noob_mode = true;
 var board = [];
 var prefix = "assets/img/";
-var dict = {"W": "water.png", "L": "grass.png", "wall": "hole.png"};
-var images = {};
+var dict = {"W": "water.png", "L": "grass.png", "wall": "hole.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "scroll": "Scroll0001.png", "slime": "", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red potion": "PotionLargeRose.png", "green potion": "PotionLargeGreen.png", "zuchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png", "unknown":"unknown.png"};
+var images = { };
 var base;
 var tileVariant = [];
 var variantLocs = {};
 
-neighborLoc = [];
-for(var i=0; i < 255; i++){
+var neighborLoc = [];
+for(var i=0; i <= 255; i++){
 	neighborLoc[i] = {x: 32, y: 96};
 }
 neighborLoc[0x00] = {x: 0, y: 32};
@@ -278,8 +278,23 @@ function drawTile(row,col,key,neighbors)
 		ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
 	}
 }
+
+function drawSprite(row,col, name){
+	var startingX = col*tileWidth();
+	var startingY = row*tileHeight();
+	ctx.drawImage(images[key], 0, 0, 32, 32,startingX,startingY, tileWidth(),tileHeight());
+};
+function drawSpriteOffset(row,col, offsetX, offsetY, name){
+	var startingX = col*tileWidth();
+	var startingY = row*tileHeight();
+	ctx.drawImage(images[name], offsetX, offsetY, 32, 32,startingX,startingY, tileWidth(),tileHeight());
+};
 function drawBoard() {
 	ctx.clearRect(0,0,canvas.width,canvas.height);
+
+	jQuery.get('../levels/level5.json', function(data) {
+		drawBoardObj(data);
+	});
 
 	if(false) {
 		for(var i=1;i<cols;i++){ //Draw columns
@@ -300,10 +315,6 @@ function drawBoard() {
 			}
 		}
 	}
-}
-
-function drawPlayer(i,j,id,dir) {
-	return;
 }
 
 function drawBoardObj(json) {
@@ -332,6 +343,9 @@ function drawBoardObj(json) {
 			}
 			else if(curr.entity == "wall") {
 				drawTile(i,j,"wall",neighbors);
+			}
+			else{
+				drawSprite(i,j,curr.entity);
 			}
 		}
 	}
