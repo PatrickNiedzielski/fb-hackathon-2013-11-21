@@ -211,28 +211,28 @@ class Player:
     def move_left(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
+        for i in range(num+1):
             self._move_dir(_west)
         gevent.sleep(0)
 
     def move_right(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
+        for i in range(num+1):
             self._move_dir(_east)
         gevent.sleep(0)
 
     def move_up(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
+        for i in range(num+1):
             self._move_dir(_north)
         gevent.sleep(0)
 
     def move_down(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
+        for i in range(num+1):
             self._move_dir(_south)
         gevent.sleep(0)
 
@@ -248,7 +248,7 @@ class Player:
         gevent.sleep(0)
 
     def get_in_front(self):
-        temppos = map(lambda x,y: x+y, self._position, dir)
+        temppos = map(lambda x,y: x+y, self._position, self._direction)
         if (temppos[1] < 0 or temppos[1] >= len(_world.grid) or
             temppos[0] < 0 or temppos[0] >= len(_world.grid[0])):
             raise Exception("Outside Map")
@@ -256,7 +256,7 @@ class Player:
 
     def take_in_front(self):
         temp = get_in_front();
-        temppos = map(lambda x,y: x+y, self._position, dir)
+        temppos = map(lambda x,y: x+y, self._position, self._direction)
         _world.grid[temppos[1]][temppos[0]] = None
         return temp
 
