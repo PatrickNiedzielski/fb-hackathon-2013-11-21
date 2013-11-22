@@ -14,16 +14,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-player1._position = [5, 6];
+player1._position = [5, 6]
 _world.grid[player1._position[1]][player1._position[0]] = player1
-player2._position = [14, 6];
+player2._position = [14, 6]
 _world.grid[player2._position[1]][player2._position[0]] = player2
 
 items = [Item("bread", [0, 2]),
-         Item("mushroom", [11, 10]),
+         Item("mushroom", [11, 9]),
          Item("scepter", [5, 4]),
-         Item("banana", [19, 3]),
-         Item("cauliflower", [10, 1]),
+         Item("banana", [17, 3]),
+         Item("zucchini", [10, 1]),
          Item("sword", [8, 9])]
 
 def at_end():

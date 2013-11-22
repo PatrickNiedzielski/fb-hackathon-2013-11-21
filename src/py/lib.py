@@ -145,10 +145,11 @@ class Item:
     def __init__(self, name, position):
         self.position = position
         self.name = name
+        _world.grid[self.position[1]][self.position[0]] = self
 
     def __repr__(self):
-        return "{ \"entity\": \"item\", \"info\": {\"name\": " + \
-            self.name + "}}"
+        return "{ \"entity\": \"item\", \"info\": {\"name\": \"" + \
+            self.name + "\"}}"
 
 class Player:
     _direction = [0, 1]
@@ -198,10 +199,10 @@ class Player:
             raise Exception("Outside Map")
         if (_world.grid[temppos[1]][temppos[0]] != None):
             raise Exception("Collision")
-            if _dropWall:
-                _world.grid[self._position[1]][self._position[0]] = Wall([self._position[1]][self._position[0]])
-            else:
-                _world.grid[self._position[1]][self._position[0]] = None
+        if self._dropWall:
+            _world.grid[self._position[1]][self._position[0]] = Wall([self._position[1]][self._position[0]])
+        else:
+            _world.grid[self._position[1]][self._position[0]] = None
         self._position = temppos
         _world.grid[self._position[1]][self._position[0]] = self
         self._turn_dir(dir);
@@ -239,7 +240,7 @@ class Player:
         exec script
 
     def say(self, message):
-        print "[\"" + str(self._name) + "\", \"" + message + "\"]");
+        print "[\"" + str(self._name) + "\", \"" + message + "\"]";
         self._messages.append(message)
         gevent.sleep(0)
 
