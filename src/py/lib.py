@@ -40,6 +40,15 @@ class Sign:
     def __repr__(self):
         return "{ \"entity\": \"sign\" }";
 
+class Slime:
+    def __init__(self, position, text):
+        self.position = position
+        self.text = text
+        _world.grid[position[1]][position[0]] = self
+
+    def __repr__(self):
+        return "{ \"entity\": \"slime\" }";
+
 class Wall:
     def __init__(self, position):
         self.position = position
