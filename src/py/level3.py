@@ -20,9 +20,9 @@ player2._position = [14, 6]
 _world.grid[player2._position[1]][player2._position[0]] = player2
 
 items = [Item("bread", [0, 2]),
-         Item("mushroom", [11, 10]),
+         Item("mushroom", [11, 9]),
          Item("scepter", [5, 4]),
-         Item("banana", [18, 3]),
+         Item("banana", [17, 3]),
          Item("cauliflower", [10, 1]),
          Item("sword", [8, 9])]
 
