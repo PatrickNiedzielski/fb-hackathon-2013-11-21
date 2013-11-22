@@ -44,8 +44,11 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
 </script>
 </head>
 <body>
+<div id="p1say" style="display: none; position:absolute;background-color:white;padding:30px;border-radius:20px;"></div>
+<div id="p2say" style="display: none; position:absolute;background-color:white;padding:30px;border-radius:20px;"></div>
 <div id="background"></div>
 <div id="front">Waiting...</div>
+<div id="container" style="margin: 0 30px 30px 30px;padding-top:20px;">
 <h1>Learn Python!</h1>
 <div id="main">
     <div id="code-left">
@@ -56,8 +59,8 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
     <textarea id="p2code" class="code" /></textarea><br />
     <button id="p2s" class="greybtn">Player 2: Ready?</button>
     </div>
-    <div id="map">
-    <canvas id="canvas" style="border: 1px solid black; background-color: black"></canvas>
+    <div id="map" style="margin-top: 20px;">
+    <canvas id="canvas" style="margin-top: 20px; border: 1px solid black; background-color: black"></canvas>
     </div>
 </div>
 <div id="sidebar">
@@ -69,6 +72,7 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
 <div id="messagesDiv">
 <input type="text" id="messageInput" placeholder="Message" />
 </div>
+</div>
 <script>
 var root = "https://learn-python.firebaseIO.com";
 var gameRoot = root + "/games/" + id;
@@ -78,6 +82,10 @@ var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
 var gameStarted = false;
 var playerOne = false;
+var p1x;
+var p1y;
+var p2x;
+var p2y;
 var nextLevel;
 var currentLevel;
 rootRef.on('value', function(ss) {
@@ -202,8 +210,8 @@ function jumpToLevel(i) {
 }
 </script>
 <script>
-var width = 1216;
-var height = 704;
+var width = 912;
+var height = 528;
 var cols = 19;
 var rows = 11;
 var random = true;
@@ -211,7 +219,7 @@ var ctx;
 var noob_mode = true;
 var board = [];
 var prefix = "assets/img/";
-var dict = {"W": "water.png", "L": "grass.png", "wall": "water.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "sign": "Scroll0001.png", "slime": "", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red potion": "PotionLargeRose.png", "green potion": "PotionLargeGreen.png", "zuchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png", "unknown":"unknown.png"};
+var dict = {"W": "water.png", "L": "grass.png", "wall": "water.png", "bread" : "foodBread.png", "mushroom": "FoodMushroomGrey.png", "scepter": "Scepter01.png", "banana": "banana.png", "sword": "Sword01.png", "sign": "Scroll0001.png", "slime": "slime.png", "axe": "Axe02.png", "wand": "Wand01.png", "tomato": "tomato.png", "key": "KeyMetal.png", "stone": "", "red_potion": "PotionLargeRose.png", "green_potion": "PotionLargeGreen.png", "zucchini":"zucchini.png", "cherries": "cherries.png", "strawberries":"strawberry.png", "kiwi":"kiwi.png", "player1": "soldier.png", "player2": "princess.png", "unknown":"unknown.png"};
 var images = { };
 var base;
 var tileVariant = [];
@@ -223,7 +231,7 @@ for(var i=0; i <= 255; i++){
 }
 neighborLoc[0x00] = {"x": 0, "y": 32};
 
-neighborLoc[0x7f] = {"x": 32, "y": 0};
+/*neighborLoc[0x7f] = {"x": 32, "y": 0};
 neighborLoc[0xdf] = {"x": 32, "y": 32};
 neighborLoc[0xbf] = {"x": 64, "y": 0};
 neighborLoc[0xef] = {"x": 64, "y": 32};
@@ -236,6 +244,10 @@ neighborLoc[0x3b] = {"x": 32, "y": 128};
 neighborLoc[0x46] = {"x": 64, "y": 64};
 neighborLoc[0x37] = {"x": 64, "y": 96};
 neighborLoc[0x13] = {"x": 64, "y": 128};
+neighborLoc[0x0d] = {"x": 0, "y": 96};
+neighborLoc[0x07] = {"x": 64, "y": 96};
+neighborLoc[0x0e] = {"x": 32, "y": 64};
+neighborLoc[0x0b] = {"x": 32, "y": 128};*/
 
 function tileWidth() {
     return width/cols;
@@ -306,13 +318,23 @@ function loadLevel(levelNum) {
 }
 
 function drawBoardObj(json) {
-	if(typeof json[0] === 'number') {
-		
+
+    console.log(json);
+	if(json[0] == "1" || json[0] == "2") {
+        var canvas = document.getElementById('canvas');
+        var position = $(canvas).position();
+        var x = position.left;
+        var y = position.top;
+        var xOffset = tileWidth() * (json[0]==1 ? p1x : p2x);
+        var yOffset = tileWidth() * (json[0]==1 ? p1y : p2y);
+        $("#p" + json[0] + "say").html(json[1]).css("left",x+yOffset - 70).css("top",y+xOffset - 50).show();
+        window.setTimeout(function() {
+            $("#p" + json[0] + "say").hide();
+        }, 1000);
+        return;
 	}
 	else if(json.rv !== undefined) {
 		if(json.rv == 0) {
-            alert('You win!');
-            //$('#background, #front').fadeIn(200).delay(400).fadeOut(200);
             if(currentLevel == 1) {
                 nextLevel = "2_1";
             }
@@ -322,13 +344,16 @@ function drawBoardObj(json) {
             else {
                 nextLevel = currentLevel + 1;
             }
+            $('#front').html('You win!');
+            $('#background, #front').fadeIn(200).delay(400).fadeOut(200);
         }
         else {
+            nextLevel = currentLevel;
             $('#front').html('Sorry, try again!');
             $('#background, #front').fadeIn(200).delay(400).fadeOut(200);
-            nextLevel = currentLevel;
         }
-	} 
+        return;
+	}
     for(var i=0;i<rows;i++) {
         for(var j=0;j<cols;j++) {
             var curr = json[i][j];
@@ -371,6 +396,13 @@ function drawBoardObj(json) {
             
             }else if(curr.entity == "player") {
                 drawSpriteOffset(i,j, 0,directionOffsets[curr.info.direction], "player" + curr.info.name);
+                if(curr.info.name=="1") {
+                    p1x = i;
+                    p1y = j;
+                } else {
+                    p2x = i;
+                    p2y = j;
+                }
                 
                 //drawTile(i,j,"L");
                 //drawPlayer(i,j,curr.entity.info.name,curr.entity.info.direction);
