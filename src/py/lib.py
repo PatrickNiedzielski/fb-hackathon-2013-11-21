@@ -199,7 +199,7 @@ class Player:
             raise Exception("Outside Map")
         if (_world.grid[temppos[1]][temppos[0]] != None):
             raise Exception("Collision")
-        if _dropWall:
+        if self._dropWall:
             _world.grid[self._position[1]][self._position[0]] = Wall([self._position[1]][self._position[0]])
         else:
             _world.grid[self._position[1]][self._position[0]] = None
