@@ -37,23 +37,22 @@
 		});
 	}
   
-	function runSimulation(p1_code, p2_code, inputFunc, errorFunc){		
-		var p1_lines = 1;
-		for(var i=0; i < p1_code.length; i++){
-			if(p1_code.charAt(i) == "\n"){
-				p1_lines++;
-			}	
-		}
-		
-		var p2_lines = 1;
-		for(var i=0; i < p2_code.length; i++){
-			if(p2_code.charAt(i) == "\n"){
-				p2_lines++;
-			}	
-		}
+	function runSimulation(playerScripts, inputFunc, errorFunc){		
+
 		jsrepl.off("input");
 		jsrepl.once("input", function(inp){
-			inp(p1_lines + "\n" + p1_code + "\n" + p2_lines + "\n" + p2_code + "\n");
+
+			var numLines = [0,0];
+
+			for(var p = 0; p < 2; p++){
+				for(var i=0; i < playerScripts[p].length; i++){
+					if(playerScripts[p].charAt(i) == "\n"){
+						numLines[p]++;
+					}	
+				}
+			}
+
+			inp("" + numLines[0] + "\n" + playerScripts[0] + "\n" + numLines[1] + "\n" + playerScripts[1] + "\n");
 			jsrepl.on("input", function(inp){inp("[none]\n");});
 		});
 		
@@ -61,6 +60,7 @@
 		var inputBuffer = "";
 		jsrepl.off("output");
 		jsrepl.on("output", function(out){
+			alert(out);
 			while(out.length > 0){
 				if(inputBufferReading && out.charCodeAt(0) == 0x11){
 					inputBufferReading = false;
@@ -101,6 +101,6 @@
 			//if(/^Exception: Collision$/g.test(err)){}
 		});
 	
-		
-		jsrepl.eval(simulationCode);
+		jsrepl.eval('print "hello world"');
+		jsrepl.eval(simulationCode + levelCode + runCode);
 	}
