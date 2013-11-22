@@ -23,7 +23,7 @@ items = [Item("bread", [0, 2]),
          Item("mushroom", [11, 9]),
          Item("scepter", [5, 4]),
          Item("banana", [17, 3]),
-         Item("cauliflower", [10, 1]),
+         Item("zucchini", [10, 1]),
          Item("sword", [8, 9])]
 
 def at_end():

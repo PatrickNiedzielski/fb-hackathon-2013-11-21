@@ -41,21 +41,21 @@ for i in range(11, 15):
 for i in range(0, 4):
     walls.append(Wall([17, i]));
 
-objects = [Item("Mushroom", [1, 1]),
-           Item("Mushroom", [4, 3]),
-           Item("Mushroom", [4, 5]),
-           Item("Mushroom", [6, 8]),
-           Item("Mushroom", [8, 3]),
-           Item("Mushroom", [9, 1]),
-           Item("Mushroom", [13, 3]),
-           Item("Mushroom", [15, 7]),
-           Item("Bread", [3, 3]),
-           Item("Bread", [4, 8]),
-           Item("Bread", [9, 2]),
-           Item("Bread", [11, 2]),
-           Item("Bread", [13, 4]),
-           Item("Bread", [16, 0]),
-           Item("Bread", [17, 4])];
+objects = [Item("mushroom", [1, 1]),
+           Item("mushroom", [4, 3]),
+           Item("mushroom", [4, 5]),
+           Item("mushroom", [6, 8]),
+           Item("mushroom", [8, 3]),
+           Item("mushroom", [9, 1]),
+           Item("mushroom", [13, 3]),
+           Item("mushroom", [15, 7]),
+           Item("bread", [3, 3]),
+           Item("bread", [4, 8]),
+           Item("bread", [9, 2]),
+           Item("bread", [11, 2]),
+           Item("bread", [13, 4]),
+           Item("bread", [16, 0]),
+           Item("bread", [17, 4])];
 
 def at_end():
     for i in range(0,19):
