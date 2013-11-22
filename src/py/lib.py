@@ -192,8 +192,8 @@ class Player:
         print _sub_none(repr(_world.grid))
         gevent.sleep(0)
 
-    def _move_dir(self, dir):
-        temppos = map(lambda x,y: x+y, self._position, dir)
+    def _move_dir(self, dir, num):
+        temppos = map(lambda x,y: x+(y*num), self._position, dir)
         if (temppos[1] < 0 or temppos[1] >= len(_world.grid) or
             temppos[0] < 0 or temppos[0] >= len(_world.grid[0])):
             raise Exception("Outside Map")
@@ -211,29 +211,27 @@ class Player:
     def move_left(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
-            self._move_dir(_west)
+        self._move_dir(_west, num)
         gevent.sleep(0)
 
     def move_right(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
-        for i in range(num):
-            self._move_dir(_east)
+        self._move_dir(_east, num)
         gevent.sleep(0)
 
     def move_up(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
         for i in range(num):
-            self._move_dir(_north)
+            self._move_dir(_north, num)
         gevent.sleep(0)
 
     def move_down(self, num = 1):
         if num > 4:
             raise "Can't jump that far"
         for i in range(num):
-            self._move_dir(_south)
+            self._move_dir(_south, num)
         gevent.sleep(0)
 
     def _run_script(self, script):
