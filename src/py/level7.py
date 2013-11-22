@@ -15,7 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 player1._position = [2, 2];
+_world.grid[player1._position[1]][player1._position[0]] = player1
 player2._position = [14, 6];
+_world.grid[player2._position[1]][player2._position[0]] = player2
 
 sign = Sign([3, 9], "The fearless, ambitious captain eavesdropped bravely on Olivia's kidnapper.")
 
