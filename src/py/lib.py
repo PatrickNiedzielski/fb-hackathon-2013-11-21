@@ -240,7 +240,7 @@ class Player:
         exec script
 
     def say(self, message):
-        print "[\"" + str(self._name) + "\", \"" + message + "\"]");
+        print "[\"" + str(self._name) + "\", \"" + message + "\"]";
         self._messages.append(message)
         gevent.sleep(0)
 
