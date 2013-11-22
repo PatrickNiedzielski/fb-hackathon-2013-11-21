@@ -164,7 +164,7 @@ class Player:
 
     def say(self, message):
         print str([self._name, message]);
-        _messages.append(message)
+        self._messages.append(message)
         gevent.sleep(0)
 
     def get_in_front(self):
