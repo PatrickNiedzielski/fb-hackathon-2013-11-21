@@ -137,6 +137,12 @@ class Player:
             raise Exception("Outside Map")
         return _world.grid[temppos[1]][temppos[0]]
 
+    def take_in_front(self):
+        temp = get_in_front();
+        temppos = map(lambda x,y: x+y, self._position, dir)
+        _world.grid[temppos[1]][temppos[0]] = None
+        return temp
+
 # Positions should be overridden in each level script
 player1 = Player(1, [1, 0])
 player2 = Player(2, [0, 1], player1)
