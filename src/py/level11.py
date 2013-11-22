@@ -25,9 +25,13 @@ pebbles = [[2, 4], [5, 4], [7, 4], [12, 4], [14, 4], [17, 4],
 walls = []
 for i in range(1, 17):
     for j in range(0, 11):
+        no_pebble = True
         for k in pebbles:
-            if i != k[0] and j != k[1]:
-                walls.append(Wall([i, j]))
+            if i == k[0] and j == k[1]:
+                no_pebble = False
+                break
+        if no_pebble:
+            walls.append(Wall([i, j]))
 
 def at_end():
     if player1._position[0] != 18 or player2._position[1] != 18:
