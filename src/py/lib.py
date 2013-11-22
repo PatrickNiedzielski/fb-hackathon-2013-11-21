@@ -40,6 +40,26 @@ class Sign:
     def __repr__(self):
         return "{ \"entity\": \"sign\" }";
 
+class Chest:
+    def __init__(self, position, items):
+        self.position = position
+        self.items = items
+
+    def __repr__(self):
+        return "{ \"entity\": \"chest\" }";
+        
+    def take_item(self):
+        return self.items.pop();
+
+class Slime:
+    def __init__(self, position, text):
+        self.position = position
+        self.text = text
+        _world.grid[position[1]][position[0]] = self
+
+    def __repr__(self):
+        return "{ \"entity\": \"slime\" }";
+
 class Wall:
     def __init__(self, position):
         self.position = position
@@ -47,6 +67,15 @@ class Wall:
 
     def __repr__(self):
         return "{ \"entity\": \"wall\" }";
+
+class Item:
+    def __init__(self, name, position):
+        self.position = position
+        self.name = name
+
+    def __repr__(self):
+        return "{ \"entity\": \"item\", \"info\": {\"name\": " + \
+            self.name + "}}"
 
 class Player:
     _direction = [0, 1]
@@ -135,7 +164,7 @@ class Player:
 
     def say(self, message):
         print str([self._name, message]);
-        _messages.append(message)
+        self._messages.append(message)
         gevent.sleep(0)
 
     def get_in_front(self):
