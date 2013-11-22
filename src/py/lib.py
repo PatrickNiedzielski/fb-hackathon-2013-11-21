@@ -15,20 +15,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import gevent
+import re
 
 _north = [0, -1]
 _south = [0, 1]
 _east = [1, 0]
 _west = [-1, 0]
 
+def _sub_none(string):
+    return re.sub('None', 'null', string)
+
 class World:
     def __init__(self):
-        self.grid = []
-        for i in range(11):
-            row = [];
-            for j in range(19):
-                row.append(None)
-                self.grid.append(row)
+        self.grid = [[None]*19 for x in xrange(11)]
 
 _world = World()
 
@@ -38,7 +37,7 @@ class Sign:
         self.text = text
         _world.grid[position[1]][position[0]] = self
 
-    def __str__(self):
+    def __repr__(self):
         return "{ \"entity\": \"sign\" }";
 
 class Wall:
@@ -46,7 +45,7 @@ class Wall:
         self.position = position
         _world.grid[position[1]][position[0]] = self
 
-    def __str__(self):
+    def __repr__(self):
         return "{ \"entity\": \"wall\" }";
 
 class Player:
@@ -59,32 +58,35 @@ class Player:
         other = other_
         _world.grid[position[1]][position[0]] = self
 
-    def __str__(self):
-        str_dirs = { _north : "N", _south : "S",
-                     _east : "E", _west : "W" }
-        str_dir = str_dirs[self._direction]
+    def __repr__(self):
+        str_dirs = { tuple(_north) : "N", tuple(_south) : "S",
+                     tuple(_east) : "E", tuple(_west) : "W" }
+        str_dir = str_dirs[tuple(self._direction)]
         return "{ \"entity\": \"player\", " + \
-            "\"info\": {\"name\": " + self._name + ", \"direction\": " + \
-            str_dir + "}}"
+            "\"info\": {\"name\": " + str(self._name) + \
+            ", \"direction\": " + str_dir + "}}"
 
     def _turn_dir(self, dir):
         self._direction = dir
-        print str(_world.grid)
 
     def turn_left(self):
         self._turn_dir(_west)
+        print _sub_none(repr(_world.grid))
         gevent.sleep(0)
 
     def turn_right(self):
         self._turn_dir(_east)
+        print _sub_none(repr(_world.grid))
         gevent.sleep(0)
 
     def turn_up(self):
         self._turn_dir(_north)
+        print _sub_none(repr(_world.grid))
         gevent.sleep(0)
 
     def turn_down(self):
         self._turn_dir(_south)
+        print _sub_none(repr(_world.grid))
         gevent.sleep(0)
 
     def _move_dir(self, dir):
@@ -98,7 +100,7 @@ class Player:
         self._position = temppos
         _world.grid[self._position[1]][self._position[0]] = self
         self._turn_dir(dir);
-        print str(_world.grid)
+        print _sub_none(repr(_world.grid))
 
     def move_left(self, num = 1):
         for i in range(num):
