@@ -102,6 +102,45 @@ class LockedDoor:
         else:
             return false;
 
+class Potion:
+    color = "green"
+    current_count = 0
+
+    def __init__(self, position):
+        self.position = position
+        _world.grid[position[1]][position[0]] = self
+
+    def __repr__(self):
+        if self.color == "green":
+            return "{ \"entity\": \"green_potion\" }";
+        else:
+            return "{ \"entity\": \"red_potion\" }";
+
+    def mix_in(self, ingredient):
+        if self.color == "green":
+            if ingredient != "zucchini":
+                raise Exception("Wrong ingredient!")
+            else:
+                self.current_count += 1
+                if (self.current_count == 3):
+                    self.color = "red"
+                    self.current_count = 0
+        elif self.color == "red":
+            if (ingredient != "cherry" and 
+                ingredient != "strawberry"):
+                raise Exception("Wrong ingredient!")
+            elif (ingredient == "strawberry" and
+                  (player1.inventory.count("cherry") != 0 or
+                   player2.inventory.count("cherry") != 0)):
+                raise Exception("Wrong ingredient!")
+            else:
+                self.current_count += 1
+                if (self.current_count == 5):
+                    _world.grid[position[1]][position[0]] = None
+        
+        print _sub_none(repr(_world.grid))
+        gevent.sleep(0)
+
 class Item:
     def __init__(self, name, position):
         self.position = position
@@ -198,6 +237,9 @@ class Player:
     def say(self, message):
         print str([self._name, message]);
         self._messages.append(message)
+        gevent.sleep(0)
+
+    def wait(self):
         gevent.sleep(0)
 
     def get_in_front(self):
