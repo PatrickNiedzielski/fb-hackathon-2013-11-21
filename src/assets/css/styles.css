@@ -20,6 +20,7 @@ h2 {
 #sidebar {
 	width:29%;
 	float:right;
+	background-color: white;
 }
 #code-left {
 	width: 50%;
