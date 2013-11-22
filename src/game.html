@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>Learn Python!</title>
+<style type="text/css">
+@import url(assets/css/styles.css);
+</style>
+<script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script language="Javascript" type="text/javascript" src="http://www.cdolivet.com/editarea/editarea/edit_area/edit_area_full.js"></script>
+
+<script>
+var useEditArea = false;
+
+if(useEditArea) {
+editAreaLoader.init({
+			id: "p1code"	// id of the textarea to transform		
+			,start_highlight: true	// if start with highlight
+			,allow_resize: "no"
+			,allow_toggle: false
+			,word_wrap: true
+			,language: "en"
+			,syntax: "python"	
+		});
+
+editAreaLoader.init({
+			id: "p2code"	// id of the textarea to transform		
+			,start_highlight: true	// if start with highlight
+			,allow_resize: "no"
+			,allow_toggle: false
+			,word_wrap: true
+			,language: "en"
+			,syntax: "python"	
+		});
+}
+
+</script>
+</head>
+<body>
+<div id="main">
+	<div id="code-left">
+	<textarea id="p1code" /></textarea><br />
+	<button id="p1s" class="not-ready">Player 1: Ready?</button>
+	</div>
+	<div id="code-right">
+	<textarea id="p2code" /></textarea><br />
+	<button id="p2s" class="not-ready">Player 2: Ready?</button>
+	</div>
+	<div id="map">
+	<img src="assets/img/house7.gif" />
+	</div>
+</div>
+<div id="sidebar">
+<h2>Chat</h2>
+<div id="messagesDiv">
+<input type="text" id="messageInput" placeholder="Message" />
+</div>
+<script>
+var root = "https://learn-python.firebaseIO.com";
+var gameRoot = root;
+var rootRef = new Firebase(gameRoot + "/");
+var code1DataRef = new Firebase(gameRoot + "/p1code");
+var code2DataRef = new Firebase(gameRoot + "/p2code");
+var messagesRef = new Firebase(gameRoot + "/messages");
+
+$("#p1code").on("keyup",function(e) {
+	alert("Hi!");
+	var code1 = editAreaLoader.getValue("p1code");
+	code1DataRef.set(code1);
+});
+
+code1DataRef.on('value', function(snapshot) {
+	var code1 = snapshot.val();
+	if(useEditArea) {
+	editAreaLoader.setValue("p1code", code1);
+	}
+	else {
+		$("#p1code").val(code1);
+	}
+});
+
+$('#p2code').keyup(function(e) {
+	var code2 = $('#p2code').val();
+	code2DataRef.set(code2);
+});
+code2DataRef.on('value', function(snapshot) {
+	$('#p2code').val(snapshot.val());
+});
+
+$('#messageInput').keypress(function(e) {
+	if(e.keyCode==13) {
+		var msgText = $('#messageInput').val();
+		messagesRef.push({player: 1, text: msgText});
+		$('#messageInput').val('');
+	}
+});
+messagesRef.on('child_added', function(snapshot) {
+	var message = snapshot.val();
+	displayChatMessage(message.player, message.text)
+});
+
+
+
+function displayChatMessage(name, text) {
+	    $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+        $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+}
+</script>
+</body>
+</html>
