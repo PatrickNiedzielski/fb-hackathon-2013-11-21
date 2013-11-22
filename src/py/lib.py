@@ -68,6 +68,40 @@ class Wall:
     def __repr__(self):
         return "{ \"entity\": \"wall\" }";
 
+class LockedChest:
+    def __init__(self, position, key):
+        self.position = position
+        self.key = key
+        _world.grid[position[1]][position[0]] = self
+
+    def __repr__(self):
+        return "{ \"entity\": \"chest\" }";
+
+    def try_unlock(self, with_key):
+        if (with_key == self.key):
+            print _sub_none(repr(_world.grid))
+            _world.grid[position[1]][position[0]] = None
+            return true;
+        else:
+            return false;
+
+class LockedDoor:
+    def __init__(self, position, key):
+        self.position = position
+        self.key = key
+        _world.grid[position[1]][position[0]] = self
+
+    def __repr__(self):
+        return "{ \"entity\": \"door\" }";
+
+    def try_unlock(self, with_key):
+        if (with_key == self.key):
+            print _sub_none(repr(_world.grid))
+            _world.grid[position[1]][position[0]] = None
+            return true;
+        else:
+            return false;
+
 class Item:
     def __init__(self, name, position):
         self.position = position
