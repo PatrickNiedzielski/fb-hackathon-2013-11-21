@@ -62,7 +62,7 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
 </div>
 <div id="sidebar">
 <button id="jump">Jump to Level!</button>
-<h2>Level</h2>
+<h2>Level <span id="lvlNum"></span></h2>
 <h3>Objective</h3>
 Get player 1 to the center before player 2 does!
 <h2>Chat</h2>
@@ -299,6 +299,8 @@ function loadLevel(levelNum) {
     jQuery.get('../levels/level' + levelNum + '.json', function(data) {
         drawBoardObj(data);
     });
+    $("#lvlNum").html(levelNum == "2_1" ? "1&#189;" : levelNum);
+
 }
 
 function drawBoardObj(json) {
@@ -308,7 +310,15 @@ function drawBoardObj(json) {
 	else if(json.rv !== undefined) {
 		if(json.rv == 0) {
             alert("You win!");
-            nextLevel = currentLevel + 1;
+            if(currentLevel == 1) {
+                nextLevel = "2_1";
+            }
+            else if(currentLevel == "2_1") {
+                nextLevel = 2;
+            }
+            else {
+                nextLevel = currentLevel + 1;
+            }
         }
         else {
             alert("Sorry, try again!");
