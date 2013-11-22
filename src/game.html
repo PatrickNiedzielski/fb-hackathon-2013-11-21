@@ -202,7 +202,28 @@ var dict = {"W": "water.png", "L": "grass.png", "wall": "hole.png"};
 var images = {};
 var base;
 var tileVariant = [];
-var variantLocs = {0: {x: 32, y: 96}, 1: {x: 0, y: 160}, 2: {x: 32, y: 160}, 3: {x: 64, y: 160}};
+var variantLocs = {};
+
+neighborLoc = [];
+for(var i=0; i < 255; i++){
+	neighborLoc[i] = {x: 32, y: 96};
+}
+neighborLoc[0x00] = {x: 0, y: 32};
+
+neighborLoc[0x7f] = {x: 32, y: 0};
+neighborLoc[0xdf] = {x: 32, y: 32};
+neighborLoc[0xbf] = {x: 64, y: 0};
+neighborLoc[0xef] = {x: 64, y: 32};
+
+neighborLoc[0x8c] = {x: 0, y: 64};
+neighborLoc[0xad] = {x: 0, y: 96};
+neighborLoc[0x29] = {x: 0, y: 128};
+neighborLoc[0xcd] = {x: 32, y: 64};
+neighborLoc[0x3b] = {x: 32, y: 128};
+neighborLoc[0x46] = {x: 64, y: 64};
+neighborLoc[0x3b] = {x: 64, y: 96};
+neighborLoc[0x13] = {x: 64, y: 128};
+
 function tileWidth() {
 	return width/cols;
 }
@@ -231,9 +252,21 @@ function drawTile(row,col,key)
 	var startingX = col*tileWidth();
 	var startingY = row*tileHeight();
 	var tv = variantLocs[tileVariant[row][col]];
+	
 	ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
 }
-
+function drawTile(row,col,key,neighbors)
+{
+	var startingX = col*tileWidth();
+	var startingY = row*tileHeight();
+	if(neighbors == 15){
+		var tv = variantLocs[tileVariant[row][col]];
+		ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
+	}else{
+		var tv = neighborLoc[neighbors];
+		ctx.drawImage(images[key],tv.x, tv.y,32,32,startingX,startingY, tileWidth(),tileHeight());
+	}
+}
 function drawBoard() {
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -267,15 +300,27 @@ function drawBoardObj(json) {
 		for(var j=0;j<cols;j++) {
 			var curr = json[i][j];
 			drawTile(i,j,"L");
+			
+			var neighbors = 0;
+			if(i == 0 || json[i-1][j] == json[i][j])	neighbors &= 0x01;
+			if(j == 0 || json[i][j-1] == json[i][j])	neighbors &= 0x02;
+			if(i == rows || json[i+1][j] == json[i][j])	neighbors &= 0x04;
+			if(j == cols || json[i][j+1] == json[i][j])	neighbors &= 0x08;
+
+			if(i == 0 || j == 0 || json[i-1][j-1] == json[i][j])	neighbors &= 0x10;
+			if(i == 0 || j == cols || json[i-1][j+1] == json[i][j])	neighbors &= 0x20;
+			if(i == rows || j == 0 || json[i+1][j-1] == json[i][j])	neighbors &= 0x40;
+			if(i == rows || j == cols || json[i+1][j+1] == json[i][j])	neighbors &= 0x80;
+			
 			if(curr.entity == "player") {
-				drawTile(i,j,"L");
+				//drawTile(i,j,"L");
 				drawPlayer(i,j,curr.entity.info.name,curr.entity.info.direction);
 			}
 			else if(curr.entity == "water") {
-				drawTile(i,j,"W");
+				drawTile(i,j,"W",neighbors);
 			}
 			else if(curr.entity == "wall") {
-				drawTile(i,j,"wall");
+				drawTile(i,j,"wall",neighbors);
 			}
 		}
 	}
