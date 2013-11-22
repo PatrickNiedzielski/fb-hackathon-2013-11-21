@@ -40,6 +40,26 @@ class Sign:
     def __repr__(self):
         return "{ \"entity\": \"sign\" }";
 
+class Chest:
+    def __init__(self, position, items):
+        self.position = position
+        self.items = items
+
+    def __repr__(self):
+        return "{ \"entity\": \"chest\" }";
+        
+    def take_item(self):
+        return self.items.pop();
+
+class Slime:
+    def __init__(self, position, text):
+        self.position = position
+        self.text = text
+        _world.grid[position[1]][position[0]] = self
+
+    def __repr__(self):
+        return "{ \"entity\": \"slime\" }";
+
 class Wall:
     def __init__(self, position):
         self.position = position
@@ -47,6 +67,15 @@ class Wall:
 
     def __repr__(self):
         return "{ \"entity\": \"wall\" }";
+
+class Item:
+    def __init__(self, name, position):
+        self.position = position
+        self.name = name
+
+    def __repr__(self):
+        return "{ \"entity\": \"item\", \"info\": {\"name\": " + \
+            self.name + "}}"
 
 class Player:
     _direction = [0, 1]
@@ -64,7 +93,7 @@ class Player:
         str_dir = str_dirs[tuple(self._direction)]
         return "{ \"entity\": \"player\", " + \
             "\"info\": {\"name\": " + str(self._name) + \
-            ", \"direction\": " + str_dir + "}}"
+            ", \"direction\": \"" + str_dir + "\"}}"
 
     def _turn_dir(self, dir):
         self._direction = dir
@@ -103,21 +132,29 @@ class Player:
         print _sub_none(repr(_world.grid))
 
     def move_left(self, num = 1):
+        if num > 4:
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_west)
         gevent.sleep(0)
 
     def move_right(self, num = 1):
+        if num > 4:
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_east)
         gevent.sleep(0)
 
     def move_up(self, num = 1):
+        if num > 4:
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_north)
         gevent.sleep(0)
 
     def move_down(self, num = 1):
+        if num > 4:
+            raise "Can't jump that far"
         for i in range(num):
             self._move_dir(_south)
         gevent.sleep(0)
@@ -127,7 +164,7 @@ class Player:
 
     def say(self, message):
         print str([self._name, message]);
-        _messages.append(message)
+        self._messages.append(message)
         gevent.sleep(0)
 
     def get_in_front(self):
@@ -136,6 +173,12 @@ class Player:
             temppos[0] < 0 or temppos[0] >= len(_world.grid[0])):
             raise Exception("Outside Map")
         return _world.grid[temppos[1]][temppos[0]]
+
+    def take_in_front(self):
+        temp = get_in_front();
+        temppos = map(lambda x,y: x+y, self._position, dir)
+        _world.grid[temppos[1]][temppos[0]] = None
+        return temp
 
 # Positions should be overridden in each level script
 player1 = Player(1, [1, 0])
