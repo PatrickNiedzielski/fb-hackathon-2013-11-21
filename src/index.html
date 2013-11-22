@@ -79,8 +79,11 @@ h2 {
 </div>
 
 <script>
+var id;
 var root = "https://learn-python.firebaseIO.com";
 var rootRef = new Firebase(root + "/");
+var gamesRef = new Firebase(root + "/games");
+var waitingGamesRef = new Firebase(root + "/waitinggames")
 var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
   if (error) {
     // an error occurred while attempting login
@@ -88,11 +91,31 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
   } else if (user) {
     // user authenticated with Firebase
     console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
-    document.location = "game.html";
+    waitingGamesRef.once('value', function(ss) {
+    	if(ss.hasChildren()) {
+    		var wg = ss.val();
+    		for(var key in wg) {
+    			id = key;
+    			ss.child(key).ref().set(null);
+    			gamesRef.child(id).child('p2').set(user.id);
+    			window.setInterval(goToGame,1000);
+    			break;
+    		}
+    	} else {
+    		id = Math.round(Math.random() * 1000000);
+    		gamesRef.child(id).set({messages: null, p1code: "", p2code: "", p1: user.id, p2: null});
+    		waitingGamesRef.child(id).set(true);
+    		window.setInterval(goToGame,1000);
+	    }
+    });    
   } else {
     // user is logged out
   }
 });
+
+function goToGame() {
+	document.location="game.html?id=" + id;
+}
 
 $("#btn").click(function() {
 	console.log("Logging in...");

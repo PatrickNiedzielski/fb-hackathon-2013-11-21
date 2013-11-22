@@ -6,8 +6,38 @@
 </style>
 <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js'></script>
+<script type='text/javascript'
+        src='https://cdn.firebase.com/v0/firebase-simple-login.js'>
+</script>
 <script language="Javascript" type="text/javascript" src="http://www.cdolivet.com/editarea/editarea/edit_area/edit_area_full.js"></script>
 <script src="repl.it/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+<script>
+var userObj;
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+var id = getParameterByName('id');
+if(id==null) {
+	document.location = "index.html";
+}
+var root = "https://learn-python.firebaseIO.com";
+var rootRef = new Firebase(root + "/");
+var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
+  if (error) {
+    // an error occurred while attempting login
+    console.log(error);
+  } else if (user) {
+  	userObj = user;
+    // user authenticated with Firebase
+    console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
+  } else {
+    document.location="index.html";
+  }
+});
+</script>
 <script>
 var useEditArea = false;
 
@@ -36,6 +66,9 @@ editAreaLoader.init({
 </script>
 </head>
 <body>
+<div id="background"></div>
+<div id="front">Waiting...</div>
+<h1>Learn Python!</h1>
 <div id="main">
 	<div id="code-left">
 	<textarea id="p1code" /></textarea><br />
@@ -56,12 +89,25 @@ editAreaLoader.init({
 </div>
 <script>
 var root = "https://learn-python.firebaseIO.com";
-var gameRoot = root;
-var rootRef = new Firebase(gameRoot + "/");
+var gameRoot = root + "/games/" + id;
+var rootRef = new Firebase(gameRoot);
 var code1DataRef = new Firebase(gameRoot + "/p1code");
 var code2DataRef = new Firebase(gameRoot + "/p2code");
 var messagesRef = new Firebase(gameRoot + "/messages");
-
+var gameStarted = false;
+rootRef.on('value', function(ss) {
+	console.log(ss.val());
+	if(!gameStarted && ss.val().p1 !== undefined && ss.val().p2 !== undefined) {
+		gameStarted = true;
+		if(userObj.id != ss.val().p1) {
+			$("#p1code").prop("disabled",true);
+		}
+		if(userObj.id != ss.val().p2) {
+			$("#p2code").prop("disabled",true);
+		}
+		$('#background, #front').fadeOut(200);
+	}
+});
 $("#p1code").on("keyup",function(e) {
 	var code1 = editAreaLoader.getValue("p1code");
 	code1DataRef.set(code1);
@@ -94,8 +140,9 @@ $('#messageInput').keypress(function(e) {
 });
 messagesRef.on('child_added', function(snapshot) {
 	var message = snapshot.val();
-	displayChatMessage(message.player, message.text)
+	displayChatMessage(message.player, message.text);
 });
+
 
 
 
