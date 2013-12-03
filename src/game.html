@@ -64,7 +64,7 @@ var auth = new FirebaseSimpleLogin(rootRef, function(error, user) {
     </div>
 </div>
 <div id="sidebar">
-<button id="jump">Jump to Level!</button>
+<button id="jump">Jump to Level!</button><input type="text" id="jmp2" style="width:20px;" />
 <h2>Level <span id="lvlNum"></span></h2>
 <h3>Objective</h3>
 <div id="objective"></div>
@@ -88,6 +88,9 @@ var p2x;
 var p2y;
 var nextLevel;
 var currentLevel;
+$("#jump").click(function() {
+    loadLevel($("#jmp2").val());
+});
 rootRef.on('value', function(ss) {
     console.log(ss.val());
     if(!gameStarted && ss.val().p1 !== undefined && ss.val().p2 !== undefined) {
